@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "617224743907",
+    "firebase_url": "https://dontforgetme-ccd81.firebaseio.com",
+    "project_id": "dontforgetme-ccd81",
+    "storage_bucket": "dontforgetme-ccd81.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:617224743907:android:7ce55218409f12c2",
+        "android_client_info": {
+          "package_name": "com.example.kyle.dfm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "617224743907-g7m4hv7t8bu1vumgmei417cao166de0m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.kyle.dfm",
+            "certificate_hash": "361a1a85e303a81fac98ee89177c94a213b77fb2"
+          }
+        },
+        {
+          "client_id": "617224743907-bkd45dmjphbepmm1qevp339h9j79n55k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWbS0xrD6gCaEbXIBbNkqpTOPuXBBC4wg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "617224743907-bkd45dmjphbepmm1qevp339h9j79n55k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

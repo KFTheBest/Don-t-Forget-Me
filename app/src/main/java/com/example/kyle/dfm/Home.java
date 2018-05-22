@@ -23,14 +23,14 @@ public class Home extends AppCompatActivity {
             startActivity(createList);
             }
             });
-            but2.setOnClickListener(new View.OnClickListener() { // make button 2 open the edit list activity
+           /* but2.setOnClickListener(new View.OnClickListener() { // make button 2 open the edit list activity
             @Override
             public void onClick(View v) {
                  Intent editScreen = new Intent(Home.this,EditScreen.class);
 
                         startActivity(editScreen);
                     }
-                });
+                });*/
         but3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {  //make button 2 open the view list activity
@@ -42,9 +42,9 @@ public class Home extends AppCompatActivity {
         but4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {  //make button 2 open the view list activity
-                Intent viewList = new Intent(Home.this,ViewList.class);
+                Intent alarmList = new Intent(Home.this,Alarm.class);
 
-                startActivity(viewList);
+                startActivity(alarmList);
             }
         });
 
