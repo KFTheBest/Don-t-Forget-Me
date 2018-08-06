@@ -3,7 +3,6 @@
     package="com.example.kyle.dfm">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
@@ -27,7 +26,10 @@
         <activity
             android:name=".HomeF"
             android:label="@string/title_activity_home_f"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".AccSettingsActivity"
+            android:label="@string/title_activity_acc_settings"></activity>
     </application>
 
 </manifest>

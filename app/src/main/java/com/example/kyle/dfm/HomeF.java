@@ -1,5 +1,8 @@
 package com.example.kyle.dfm;
 
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -18,6 +21,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.dynamic.SupportFragmentWrapper;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,10 +30,8 @@ public class HomeF extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
-    private android.widget.Button editList;
-    private android.widget.TextView locationTxt;
-    private android.widget.TextView dayTxt;
-    private android.widget.TextView uhhTxt;
+    private android.widget.TextView dayTxt; //REMEMBER TO CHANGE
+    private android.widget.TextView uhhTxt; //REMEMBER TO CHANGE
 
 
 
@@ -40,7 +43,6 @@ public class HomeF extends AppCompatActivity
 
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,8 +51,6 @@ public class HomeF extends AppCompatActivity
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        editList = (android.widget.Button)findViewById(R.id.editList);
-        locationTxt = (TextView)findViewById(R.id.locationTxt);
         dayTxt = (TextView)findViewById(R.id.day);
         uhhTxt =  (TextView)findViewById(R.id.uhhTxt);
 
@@ -61,8 +61,17 @@ public class HomeF extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                /*FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+                CreateList listFrag = new CreateList();
+                fragmentTransaction.add(R.id.addlist1,listFrag);
+                fragmentTransaction.commit(); */
+
+                Intent viewList = new Intent(HomeF.this,CreateList.class);
+
+                startActivity(viewList);
+
             }
         });
 
@@ -78,18 +87,9 @@ public class HomeF extends AppCompatActivity
 
 
 
-        editList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {  //make button 2 open the view list activity
-                Intent viewList = new Intent(HomeF.this,ViewList.class);
 
-                startActivity(viewList);
-            }
-        });
-
-       locationTxt.setText("You are currently located at: ");
        dayTxt.setText("Have a great day!");
-       uhhTxt.setText("Here's the item list for the current location.");
+       uhhTxt.setText("Make sure you have all of you necessary items.");
 
 
 
@@ -158,15 +158,25 @@ public class HomeF extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
 
-        } else if (id == R.id.nav_slideshow) {
+            Intent viewList = new Intent(HomeF.this,ViewList.class);
 
-        } else if (id == R.id.nav_manage) {
+            startActivity(viewList);
 
         } else if (id == R.id.nav_share) {
+            Intent alarm = new Intent(HomeF.this,Alarm.class);
+
+            startActivity(alarm);
+
 
         } else if (id == R.id.nav_send) {
+
+            Intent accSettings = new Intent(HomeF.this,AccSettingsActivity
+                    .class);
+
+            startActivity(accSettings);
+
+
 
         }
 

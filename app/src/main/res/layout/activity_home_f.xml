@@ -21,12 +21,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/locationTxt"
-            android:layout_gravity="top"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/uhhTxt"
             android:layout_gravity="top"/>
 
@@ -36,17 +30,13 @@
             android:id="@+id/listItem">
 
         </ListView>
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/editList"
-            android:text="Edit this list!"
-            android:layout_gravity="center"/>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/day"
             android:layout_gravity="bottom"/>
+
 
     </LinearLayout>
 

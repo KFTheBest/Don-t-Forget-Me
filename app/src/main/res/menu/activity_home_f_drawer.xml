@@ -7,18 +7,18 @@
         <item
             android:id="@+id/nav_camera"
             android:icon="@drawable/add"
-            android:title="View Saved Lists!" />
+            android:title="Edit Saved Items!" />
     </group>
 
     <item android:title="Settings">
         <menu>
             <item
                 android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Alarm Settings" />
+                android:icon="@drawable/ic_notifications_black_24dp"
+                android:title="Location Settings" />
             <item
                 android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
+                android:icon="@drawable/ic_menu_manage"
                 android:title="Account Settings" />
         </menu>
     </item>
