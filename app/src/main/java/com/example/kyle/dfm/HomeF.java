@@ -30,8 +30,8 @@ public class HomeF extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
-    private android.widget.TextView dayTxt; //REMEMBER TO CHANGE
-    private android.widget.TextView uhhTxt; //REMEMBER TO CHANGE
+    private android.widget.TextView userMessage; //REMEMBER TO CHANGE
+    private android.widget.TextView itemCheck; //REMEMBER TO CHANGE
 
 
 
@@ -51,8 +51,8 @@ public class HomeF extends AppCompatActivity
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        dayTxt = (TextView)findViewById(R.id.day);
-        uhhTxt =  (TextView)findViewById(R.id.uhhTxt);
+        userMessage = (TextView)findViewById(R.id.day);
+        itemCheck =  (TextView)findViewById(R.id.uhhTxt);
 
 
         setSupportActionBar(toolbar);
@@ -88,8 +88,8 @@ public class HomeF extends AppCompatActivity
 
 
 
-       dayTxt.setText("Have a great day!");
-       uhhTxt.setText("Make sure you have all of you necessary items.");
+       userMessage.setText("Have a great day!");
+       itemCheck.setText("Make sure you have all of you necessary items.");
 
 
 
