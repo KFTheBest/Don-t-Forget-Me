@@ -47,7 +47,7 @@ public class Alarm extends AppCompatActivity implements GoogleApiClient.Connecti
             case MY_PERMISSION_REQUEST_CODE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if (checkPlayServices()) {
-                        buildGoogleApiClient();
+
                         createLocationRequest();
                     }
                 }
@@ -59,6 +59,7 @@ public class Alarm extends AppCompatActivity implements GoogleApiClient.Connecti
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
+        buildGoogleApiClient();
 
         txtCoordinates = (TextView) findViewById(R.id.txtCoordinates);
         btnGetCoordinates = (Button) findViewById(R.id.btnGetCoordinates);
@@ -77,14 +78,12 @@ public class Alarm extends AppCompatActivity implements GoogleApiClient.Connecti
                 createLocationRequest();
             }
         }
-
         btnGetCoordinates.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 displayLocation();
             }
         });
-
         btnLocationUpdates.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -92,7 +91,6 @@ public class Alarm extends AppCompatActivity implements GoogleApiClient.Connecti
             }
         });
     }
-
 
     @Override
     protected void onResume() {
@@ -138,8 +136,6 @@ public class Alarm extends AppCompatActivity implements GoogleApiClient.Connecti
         }
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
-
-
         if (mLastLocation != null) {
             double latitude = mLastLocation.getLatitude();
             double longitude = mLastLocation.getLongitude();
@@ -155,7 +151,6 @@ public class Alarm extends AppCompatActivity implements GoogleApiClient.Connecti
         mLocationRequest.setFastestInterval(FATEST_INTERVAL);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setSmallestDisplacement(DISPLACEMENT);
-
     }
 
     private synchronized void buildGoogleApiClient() {
@@ -166,8 +161,6 @@ public class Alarm extends AppCompatActivity implements GoogleApiClient.Connecti
 
         //Fix first time run app if permission doesn't grant yet so can't get anything
         mGoogleApiClient.connect();
-
-
     }
 
     private boolean checkPlayServices() {
@@ -203,8 +196,6 @@ public class Alarm extends AppCompatActivity implements GoogleApiClient.Connecti
             startLocationUpdates();
     }
 
-
-
     @Override
     public void onConnectionSuspended(int i) {
         mGoogleApiClient.connect();
@@ -212,7 +203,6 @@ public class Alarm extends AppCompatActivity implements GoogleApiClient.Connecti
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
     }
 
     @Override
@@ -245,11 +235,6 @@ public class Alarm extends AppCompatActivity implements GoogleApiClient.Connecti
             double longitude = mLastLocation.getLongitude();
             txtCoordinates.setText("Current Coordinates are "+latitude + " / " + longitude);
         }
-
-
-
-
-
 
     }
 }
