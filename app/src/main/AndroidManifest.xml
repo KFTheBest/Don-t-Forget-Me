@@ -29,7 +29,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".AccSettingsActivity"
-            android:label="@string/title_activity_acc_settings"></activity>
+            android:label="@string/title_activity_acc_settings" />
+        <activity android:name=".AddressActivity"></activity>
     </application>
 
 </manifest>

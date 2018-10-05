@@ -5,9 +5,14 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
+        android:id="@+id/nav_camera"
+        android:icon="@drawable/add"
+        android:title="Edit Saved Items!" />
+
+        <item
+            android:id="@+id/nav_address"
             android:icon="@drawable/add"
-            android:title="Edit Saved Items!" />
+            android:title="Add a new location!" />
     </group>
 
     <item android:title="Settings">

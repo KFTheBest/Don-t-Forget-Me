@@ -3,6 +3,7 @@ package com.example.kyle.dfm;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -42,7 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeF extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener{
 
     private android.widget.TextView userMessage; //Good day message to user
     private android.widget.TextView itemCheck; // Message to remind user about items
@@ -51,7 +52,6 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
     ArrayAdapter<String> arrayAdapter;
     List<Data> mData;
     TextView dataName;
-    Alarm alarm = new Alarm();
 
 
     private static final int MY_PERMISSION_REQUEST_CODE = 7171;
@@ -218,7 +218,15 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
             startActivity(viewList);
 
-        } else if (id == R.id.nav_share) {
+        }else if (id == R.id.nav_address) {
+
+            Intent address = new Intent(HomeF.this,AddressActivity.class);
+
+            startActivity(address);
+
+
+
+        }else if (id == R.id.nav_share) {
             Intent alarm = new Intent(HomeF.this,Alarm.class);
 
             startActivity(alarm);
@@ -226,8 +234,7 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
         } else if (id == R.id.nav_send) {
 
-            Intent accSettings = new Intent(HomeF.this,AccSettingsActivity
-                    .class);
+            Intent accSettings = new Intent(HomeF.this,AccSettingsActivity.class);
 
             startActivity(accSettings);
 
