@@ -90,8 +90,8 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        userMessage = (TextView)findViewById(R.id.day);
-        itemCheck =  (TextView)findViewById(R.id.uhhTxt);
+        userMessage = (TextView)findViewById(R.id.userMessage);
+        itemCheck =  (TextView)findViewById(R.id.itemCheck);
 
 
         setSupportActionBar(toolbar);
@@ -102,7 +102,6 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
             public void onClick(View view) {
                 /*FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
                 CreateList listFrag = new CreateList();
                 fragmentTransaction.add(R.id.addlist1,listFrag);
                 fragmentTransaction.commit(); */
@@ -114,15 +113,15 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-            this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-       userMessage.setText("Have a great day!");
-       itemCheck.setText("Make sure you have all of you necessary items.");
+        userMessage.setText("Have a great day!");
+        itemCheck.setText("Make sure you have all of you necessary items.");
         listView = (ListView)findViewById(R.id.listItem);
 
 
@@ -227,7 +226,7 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
 
         }else if (id == R.id.nav_share) {
-            Intent alarm = new Intent(HomeF.this,Alarm.class);
+            Intent alarm = new Intent(HomeF.this,MyLocation.class);
 
             startActivity(alarm);
 

@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".CreateList" />
         <activity android:name=".ViewList" />
-        <activity android:name=".Alarm" />
+        <activity android:name=".MyLocation" />
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

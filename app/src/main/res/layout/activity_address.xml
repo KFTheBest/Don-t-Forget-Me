@@ -4,14 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".AddressActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:layout_editor_absoluteX="79dp"
-        tools:layout_editor_absoluteY="0dp">
+
 
         <TextView
             android:id="@+id/address1text"
@@ -69,21 +65,24 @@
             android:layout_height="wrap_content" />
 
 
-        <Button
-            android:id="@+id/submitBtn"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
+    <Button
+        android:id="@+id/submitBtn"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:background="@android:color/holo_orange_dark"
+        android:onClick="saveButtonClicked"
+        android:text="Save!"
+        android:textSize="20sp" />
 
+    <Button
+        android:id="@+id/autoBtn"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="37dp"
+        android:background="@android:color/holo_blue_bright"
+        android:text="Auto-Detect Location!"
+        android:textSize="20sp" />
 
-            android:background="@android:color/holo_orange_dark"
-            android:onClick="saveButtonClicked"
-            android:text="Save!"
-            android:textSize="20sp" />
-
-
-    </LinearLayout>
 
 </LinearLayout>

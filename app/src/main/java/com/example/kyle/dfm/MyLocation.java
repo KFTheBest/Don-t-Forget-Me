@@ -1,6 +1,5 @@
 package com.example.kyle.dfm;
 
-import android.*;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,7 +23,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
-public class Alarm extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
+public class MyLocation extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private static final int MY_PERMISSION_REQUEST_CODE = 7171;
@@ -39,6 +38,9 @@ public class Alarm extends AppCompatActivity implements GoogleApiClient.Connecti
     private static int UPDATE_INTERVAL = 5000; // SEC
     private static int FATEST_INTERVAL = 3000; // SEC
     private static int DISPLACEMENT = 10; // METERS
+
+    double latitude;
+    double longitude;
 
 
     @Override
@@ -137,8 +139,8 @@ public class Alarm extends AppCompatActivity implements GoogleApiClient.Connecti
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
         if (mLastLocation != null) {
-            double latitude = mLastLocation.getLatitude();
-            double longitude = mLastLocation.getLongitude();
+            latitude = mLastLocation.getLatitude();
+            longitude = mLastLocation.getLongitude();
             txtCoordinates.setText("Current Coordinates are "+latitude + " / " + longitude);
         } else
             txtCoordinates.setText("Couldn't get the location. Make sure location is enable on the device");
@@ -211,12 +213,12 @@ public class Alarm extends AppCompatActivity implements GoogleApiClient.Connecti
 
         if(location != mLastLocation){
 
-            final AlertDialog.Builder dialog = new AlertDialog.Builder(Alarm.this);
+            final AlertDialog.Builder dialog = new AlertDialog.Builder(MyLocation.this);
             dialog.setTitle("Final Check").setMessage("Do you have everything you need?").setPositiveButton("Open my list to check. Just in case.",
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(Alarm.this,ViewList.class);
+                            Intent intent = new Intent(MyLocation.this,ViewList.class);
                             startActivity(intent);
                         }
                     }).setNegativeButton("Yes, I do! Thank You!", new DialogInterface.OnClickListener() {
@@ -231,8 +233,8 @@ public class Alarm extends AppCompatActivity implements GoogleApiClient.Connecti
             displayLocation();
         }
         else{
-            double latitude = mLastLocation.getLatitude();
-            double longitude = mLastLocation.getLongitude();
+            latitude = mLastLocation.getLatitude();
+            longitude = mLastLocation.getLongitude();
             txtCoordinates.setText("Current Coordinates are "+latitude + " / " + longitude);
         }
 
