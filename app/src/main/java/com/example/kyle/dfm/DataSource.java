@@ -77,13 +77,11 @@ public class DataSource {
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                     if (databaseError == null) {
                         Toast.makeText(mContext, "Item has been posted!", Toast.LENGTH_SHORT).show();
-                        Intent i = new Intent(mContext, ViewList.class);
-                        mContext.startActivity(i);
                     }
                 }
             });
         }
-       // public ImageLoader getImageLoader() {return mImageLoader;
+
         }
 
 

@@ -38,12 +38,10 @@ public class AddressSource {
 
     //Firebase methods
     public void getAddress(final AddressListener addressListener) {
-        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference itemsRef = databaseRef.child("address");
+        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("addressData");
+        //DatabaseReference itemsRef = databaseRef.child("addressData");
 
-
-
-        itemsRef.addValueEventListener(new ValueEventListener() {
+        databaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<AddressData> addressData = new ArrayList<>();
@@ -66,9 +64,9 @@ public class AddressSource {
     }
 
     public void sendAddress(AddressData addressData) {
-        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference addressRef = databaseRef.child("addressData");
-        DatabaseReference newAddressRef = addressRef.push();
+        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("addressData");
+        //DatabaseReference addressRef = databaseRef.child("addressData");
+        DatabaseReference newAddressRef = databaseRef.push();
 
         Map<String, String> addressValMap = new HashMap<>();
         addressValMap.put("mAddressName", addressData.getAddressName());
@@ -77,12 +75,10 @@ public class AddressSource {
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 if (databaseError == null) {
                     Toast.makeText(mContext, "AddressData has been posted!", Toast.LENGTH_SHORT).show();
-                    Intent i = new Intent(mContext, ViewList.class);
-                    mContext.startActivity(i);
+
                 }
             }
         });
     }
-    // public ImageLoader getImageLoader() {return mImageLoader;
 
 }

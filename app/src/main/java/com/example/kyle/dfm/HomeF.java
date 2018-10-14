@@ -52,12 +52,22 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
     ArrayAdapter<String> arrayAdapter;
     List<Data> mData;
     TextView dataName;
+    String userLocal ;
+    AddressActivity addressActivity;
+
+    String lat = "";
+    String lon = "";
+
+    Double setLatitude;
+    Double setLongitude;
+
+    Double currLatitude;
+    Double currLongitude;
+
 
 
     private static final int MY_PERMISSION_REQUEST_CODE = 7171;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 7172;
-    private TextView txtCoordinates;
-    private Button btnGetCoordinates, btnLocationUpdates;
     private boolean mRequestingLocationUpdates = false;
     private LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
@@ -66,6 +76,9 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
     private static int UPDATE_INTERVAL = 5000; // SEC
     private static int FATEST_INTERVAL = 3000; // SEC
     private static int DISPLACEMENT = 10; // METERS
+
+
+
 
 
     @Override
@@ -82,6 +95,8 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
         }
     }
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +107,7 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         userMessage = (TextView)findViewById(R.id.userMessage);
         itemCheck =  (TextView)findViewById(R.id.itemCheck);
+
 
 
         setSupportActionBar(toolbar);
@@ -139,10 +155,6 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
 
 
-        txtCoordinates = (TextView) findViewById(R.id.txtCoordinates);
-        btnGetCoordinates = (Button) findViewById(R.id.btnGetCoordinates);
-        btnLocationUpdates = (Button) findViewById(R.id.btnTrackLocation);
-
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             //Run-time request permission
@@ -156,18 +168,10 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
                 createLocationRequest();
             }
         }
-        btnGetCoordinates.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                displayLocation();
-            }
-        });
-        btnLocationUpdates.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                tooglePeriodicLoctionUpdates();
-            }
-        });
+
+
+        addressActivity = new AddressActivity();
+        userLocal = addressActivity.usrLocation;
 
 
     }
@@ -246,6 +250,7 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
         return true;
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -257,10 +262,12 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
         super.onStart();
         if(mGoogleApiClient != null)
             mGoogleApiClient.connect();
+
     }
 
     @Override
     protected void onStop() {
+
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient,this);
         if(mGoogleApiClient != null)
             mGoogleApiClient.disconnect();
@@ -270,13 +277,13 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
     private void tooglePeriodicLoctionUpdates() {
         if(!mRequestingLocationUpdates)
         {
-            btnLocationUpdates.setText("Stop location update");
+
             mRequestingLocationUpdates = true;
             startLocationUpdates();
         }
         else
         {
-            btnLocationUpdates.setText("Start location update");
+
             mRequestingLocationUpdates = false;
             stopLocationUpdates();
         }
@@ -291,11 +298,10 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
         if (mLastLocation != null) {
-            double latitude = mLastLocation.getLatitude();
-            double longitude = mLastLocation.getLongitude();
-            txtCoordinates.setText("Current Coordinates are "+latitude + " / " + longitude);
-        } else
-            txtCoordinates.setText("Couldn't get the location. Make sure location is enable on the device");
+            currLatitude = mLastLocation.getLatitude();
+            currLongitude = mLastLocation.getLongitude();
+
+        }
 
     }
 
@@ -365,6 +371,44 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
         if(location != mLastLocation){
 
+            mLastLocation = location;
+
+        }
+        else{
+            currLatitude = mLastLocation.getLatitude();
+            currLongitude = mLastLocation.getLongitude();
+
+        }
+
+        onLocChange(userLocal);
+
+    }
+
+
+
+
+
+
+
+
+
+
+    public void onLocChange(String location) {
+        lat = "";
+        lon = "";
+        String[] parts = location.split(",",2);
+        lat = parts[0];
+        lon = parts[1];
+
+        setLatitude = Double.parseDouble(lat);
+        setLongitude = Double.parseDouble(lon);
+
+        float[] dist = new float[1];
+
+        Location.distanceBetween(setLatitude,setLongitude,currLatitude,currLongitude,dist);
+
+        if(dist[0]/100 >1) {
+
             final AlertDialog.Builder dialog = new AlertDialog.Builder(HomeF.this);
             dialog.setTitle("Final Check").setMessage("Do you have everything you need?").setPositiveButton("Open my list to check. Just in case.",
                     new DialogInterface.OnClickListener() {
@@ -381,16 +425,16 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
             });
             dialog.show();
 
-            mLastLocation = location;
-            displayLocation();
-        }
-        else{
-            double latitude = mLastLocation.getLatitude();
-            double longitude = mLastLocation.getLongitude();
-            txtCoordinates.setText("Current Coordinates are "+latitude + " / " + longitude);
         }
 
+
+
+
+
+
     }
+
+
 
 
 

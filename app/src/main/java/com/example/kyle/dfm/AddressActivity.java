@@ -15,8 +15,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,11 +30,12 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 public class AddressActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener{
 
     String address1Text;
     String address2Text;
@@ -54,8 +58,14 @@ public class AddressActivity extends AppCompatActivity implements GoogleApiClien
     double latitude;
     double longitude;
 
+    public String usrLocation = "";
+    List<AddressData> mData;
+    ArrayList<String> arrayList;
+    ArrayAdapter<String> adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_address);
         buildGoogleApiClient();
@@ -79,6 +89,47 @@ public class AddressActivity extends AppCompatActivity implements GoogleApiClien
             @Override
             public void onClick(View view) {
                 saveLocation();
+            }
+        });
+
+
+
+
+        final Spinner spinner = (Spinner) findViewById(R.id.addressSpin);
+
+        arrayList = new ArrayList<>();
+        adapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,arrayList);
+
+        AddressSource.get(AddressActivity.this).getAddress(new AddressSource.AddressListener() {
+            @Override
+            public void onAddressReceived(List<AddressData> items) {
+
+                //receiving list of address data objects, get the actual data
+
+                spinner.setAdapter(new AddressAdapter(AddressActivity.this,R.layout.support_simple_spinner_dropdown_item,items));
+
+            }
+        });
+
+
+
+// Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+
+// Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                usrLocation = ((Spinner) findViewById(R.id.addressSpin)).getSelectedItem().toString();
+                Log.d("Creation", usrLocation);
+                System.out.print(usrLocation);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 
@@ -167,7 +218,7 @@ public class AddressActivity extends AppCompatActivity implements GoogleApiClien
 
             finish();
             super.onBackPressed();
-            
+
 
 
         } else{}
@@ -280,5 +331,8 @@ public class AddressActivity extends AppCompatActivity implements GoogleApiClien
             super.onBackPressed();
         }
     }
+
+
+
 
 }
