@@ -4,17 +4,17 @@ import com.google.firebase.database.DataSnapshot;
 
 public class AddressData {
 
-    String addressName;
+    private String maddressName;
 
     public AddressData(String addressName){
-        this.addressName = addressName;
+        maddressName = addressName;
     }
 
     public AddressData(DataSnapshot snapshot){
-        addressName = snapshot.child("mAddressName").getValue(String.class);
+        maddressName = snapshot.child("mAddressName").getValue(String.class);
     }
     String getAddressName(){
-        return addressName;
+        return maddressName;
     }
 
 

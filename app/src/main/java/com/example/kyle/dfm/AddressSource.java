@@ -44,8 +44,8 @@ public class AddressSource {
         databaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<AddressData> addressData = new ArrayList<>();
                 Iterable<DataSnapshot> iter = dataSnapshot.getChildren();
+                List<AddressData> addressData = new ArrayList<>();
                 for (DataSnapshot itemSnapshot: iter) {
                     //String description = itemSnapshot.child("mDataName").getValue(String.class);
                     AddressData addressData1 = new AddressData(itemSnapshot);
@@ -68,7 +68,7 @@ public class AddressSource {
         //DatabaseReference addressRef = databaseRef.child("addressData");
         DatabaseReference newAddressRef = databaseRef.push();
 
-        Map<String, String> addressValMap = new HashMap<>();
+        Map<String, Object> addressValMap = new HashMap<>();
         addressValMap.put("mAddressName", addressData.getAddressName());
         newAddressRef.setValue(addressValMap, new DatabaseReference.CompletionListener() {
             @Override
@@ -79,6 +79,7 @@ public class AddressSource {
                 }
             }
         });
+
     }
 
 }

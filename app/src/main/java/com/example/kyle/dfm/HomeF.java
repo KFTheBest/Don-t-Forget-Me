@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -25,9 +26,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,7 +55,7 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
     ArrayAdapter<String> arrayAdapter;
     List<Data> mData;
     TextView dataName;
-    String userLocal ;
+    String usrLocation = "40.598300,-73.762960";
     AddressActivity addressActivity;
 
     String lat = "";
@@ -63,6 +66,10 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
     Double currLatitude;
     Double currLongitude;
+    List<AddressData> mAddData;
+    ArrayList<AddressData> addList;
+    ArrayAdapter<String> adapter;
+
 
 
 
@@ -170,8 +177,52 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
         }
 
 
-        addressActivity = new AddressActivity();
-        userLocal = addressActivity.usrLocation;
+
+        final Spinner spinner = (Spinner) findViewById(R.id.addressSpin);
+
+        addList = new ArrayList<>();
+        adapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,arrayList);
+
+        AddressSource.get(HomeF.this).getAddress(new AddressSource.AddressListener() {
+            @Override
+            public void onAddressReceived(List<AddressData> items) {
+
+                //receiving list of address data objects, get the actual data
+
+                spinner.setAdapter(new AddressAdapter(HomeF.this,R.layout.support_simple_spinner_dropdown_item,items));
+
+            }
+        });
+
+
+
+// Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+
+// Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // usrLocation = ((Spinner) findViewById(R.id.addressSpin)).getSelectedItem().toString();
+                AddressData addressData = (AddressData)parent.getItemAtPosition(position);
+
+                usrLocation = addressData.getAddressName();
+                Log.d("Creation", usrLocation);
+                System.out.print(usrLocation);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+
+            }
+        });
+
+
+        displayLocation();
+        onLocChange(usrLocation);
 
 
     }
@@ -380,22 +431,18 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
         }
 
-        onLocChange(userLocal);
+
 
     }
-
-
-
-
-
-
-
-
-
 
     public void onLocChange(String location) {
         lat = "";
         lon = "";
+
+        if(location == "" || location == null){
+            Log.d("Deletion", "We out dis bih");
+            return;
+        }
         String[] parts = location.split(",",2);
         lat = parts[0];
         lon = parts[1];
@@ -403,7 +450,12 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
         setLatitude = Double.parseDouble(lat);
         setLongitude = Double.parseDouble(lon);
 
+
         float[] dist = new float[1];
+        Log.d("myLat", setLatitude.toString());
+        Log.d("myLon", setLongitude.toString());
+        Log.d("CurrLat", currLatitude.toString());
+        Log.d("CurrLon", currLongitude.toString());
 
         Location.distanceBetween(setLatitude,setLongitude,currLatitude,currLongitude,dist);
 

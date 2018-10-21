@@ -29,6 +29,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,9 +62,7 @@ public class AddressActivity extends AppCompatActivity implements GoogleApiClien
     double longitude;
 
     public String usrLocation = "";
-    List<AddressData> mData;
-    ArrayList<String> arrayList;
-    ArrayAdapter<String> adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,44 +95,6 @@ public class AddressActivity extends AppCompatActivity implements GoogleApiClien
 
 
 
-
-        final Spinner spinner = (Spinner) findViewById(R.id.addressSpin);
-
-        arrayList = new ArrayList<>();
-        adapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,arrayList);
-
-        AddressSource.get(AddressActivity.this).getAddress(new AddressSource.AddressListener() {
-            @Override
-            public void onAddressReceived(List<AddressData> items) {
-
-                //receiving list of address data objects, get the actual data
-
-                spinner.setAdapter(new AddressAdapter(AddressActivity.this,R.layout.support_simple_spinner_dropdown_item,items));
-
-            }
-        });
-
-
-
-// Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-
-// Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                usrLocation = ((Spinner) findViewById(R.id.addressSpin)).getSelectedItem().toString();
-                Log.d("Creation", usrLocation);
-                System.out.print(usrLocation);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
 
     }
 
@@ -199,6 +162,8 @@ public class AddressActivity extends AppCompatActivity implements GoogleApiClien
 
 
     private void saveLocation() {
+
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -210,12 +175,13 @@ public class AddressActivity extends AppCompatActivity implements GoogleApiClien
             longitude = mLastLocation.getLongitude();
 
             String addressText = Double.toString(latitude) + "," + Double.toString(longitude);
-            Intent intent = new Intent();
-            intent.putExtra(Intent_Constants.INTENT_MESSAGE_FIELD,addressText);
-            setResult(Intent_Constants.INTENT_RESULT_CODE,intent);
-            AddressData addressData = new AddressData(addressText);
-            AddressSource.get(AddressActivity.this).sendAddress(addressData);
 
+
+
+            AddressData addressData = new AddressData(addressText);
+            Log.d("Save1",addressData.toString());
+            AddressSource.get(getApplicationContext()).sendAddress(addressData);
+            Log.d("Save2",addressData.toString());
             finish();
             super.onBackPressed();
 
