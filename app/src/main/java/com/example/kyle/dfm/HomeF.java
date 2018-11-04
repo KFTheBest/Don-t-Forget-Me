@@ -52,6 +52,7 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
     private android.widget.TextView userMessage; //Good day message to user
 
     private android.widget.TextView itemCheck; // Message to remind user about items
+
     ListView listView;
 
     ArrayList<String> arrayList;
@@ -62,7 +63,7 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
     TextView dataName;
 
-    String usrLocation = "40.598300,-73.762960";
+    String usrLocation ;
 
     String lat = "";
 
@@ -502,8 +503,8 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
             setLongitude = Double.parseDouble(lon);
             */
 
-            setLatitude =  40.598300;
-            setLongitude = -73.762960;
+            //setLatitude =  40.598300;
+            //setLongitude = -73.762960;
 
             float[] dist = new float[1];
 
