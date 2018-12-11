@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/changeLocalText"/>
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:id="@+id/changeLocal"
+        android:layout_height="wrap_content"></Spinner>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/changeRadiusText"/>
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:id="@+id/changeRadius"
+        android:layout_height="wrap_content"></Spinner>
+
+    <Button
+        android:id="@+id/deleteLocal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_red_light"
+        android:text="Delete Saved Locations"/>
+
+    <Button
+        android:id="@+id/finishedLocal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_green_light"
+        android:text="Done!"/>
+
+
+
+</LinearLayout>

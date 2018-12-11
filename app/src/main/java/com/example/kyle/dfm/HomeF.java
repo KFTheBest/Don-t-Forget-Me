@@ -81,7 +81,7 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
     ArrayList<AddressData> addList;
 
-    ArrayAdapter<String> adapter;
+    //ArrayAdapter<String> adapter;
 
     private static final int MY_PERMISSION_REQUEST_CODE = 7171;
 
@@ -94,7 +94,6 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
     private GoogleApiClient mGoogleApiClient;
 
     private Location mLastLocation;
-
 
     private static int UPDATE_INTERVAL = 5000; // SEC
 
@@ -184,11 +183,11 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
         dataName = (TextView)findViewById(R.id.dataName);
 
-        final Spinner spinner = (Spinner) findViewById(R.id.addressSpin);
+        //final Spinner spinner = (Spinner) findViewById(R.id.addressSpin);
 
         addList = new ArrayList<>();
 
-        adapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,arrayList);
+        //adapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,arrayList);
 
         AddressSource.get(HomeF.this).getAddress(new AddressSource.AddressListener() {
             @Override
@@ -196,12 +195,12 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
                 mAddData = items;
 
-                spinner.setAdapter(new AddressAdapter(HomeF.this,R.layout.support_simple_spinner_dropdown_item,items));
+                //spinner.setAdapter(new AddressAdapter(HomeF.this,R.layout.support_simple_spinner_dropdown_item,items));
 
             }
         });
 
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        /*adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         spinner.setAdapter(adapter);
 
@@ -213,12 +212,13 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
                 AddressData addressData = (AddressData)parent.getItemAtPosition(position);
 
                 usrLocation = addressData.getAddressName();
+                onLocChange(usrLocation);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
-        });
+        }); */
 
         Button startBtn = (Button)findViewById(R.id.startBtn);
         startBtn.setOnClickListener(new View.OnClickListener() {
@@ -314,7 +314,7 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
         }else if (id == R.id.nav_share) {
 
-            Intent alarm = new Intent(HomeF.this,MyLocation.class);
+            Intent alarm = new Intent(HomeF.this,LocationSettings.class);
 
             startActivity(alarm);
 
@@ -360,9 +360,10 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
         stopLocationUpdates();
 
-        if(mGoogleApiClient != null)
+        if(mGoogleApiClient != null) {mGoogleApiClient.disconnect();}
 
-            mGoogleApiClient.disconnect();
+        Intent intent = new Intent(this,NotificationService.class);
+        startService(intent);
 
         super.onStop();
     }
@@ -503,8 +504,8 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
             setLongitude = Double.parseDouble(lon);
             */
 
-            //setLatitude =  40.598300;
-            //setLongitude = -73.762960;
+            setLatitude =  40.598300;
+            setLongitude = -73.762960;
 
             float[] dist = new float[1];
 

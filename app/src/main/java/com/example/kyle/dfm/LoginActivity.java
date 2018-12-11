@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -25,10 +26,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-/**
- * Created by Kyle Frederick on 8/20/2017.
- */
-
 public class LoginActivity extends AppCompatActivity{
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -39,6 +36,14 @@ public class LoginActivity extends AppCompatActivity{
     private SignInButton mGoogleBtn;
     private static final int RC_SIGN_IN = 1;
     private GoogleApiClient mGoogleApiClient;
+    private Button msignIn;
+
+    private TextView emailAddressText;
+    private TextView passwordText;
+    private EditText passwordInput;
+    private EditText emailAddressInput;
+    private boolean logSuccess;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +51,13 @@ public class LoginActivity extends AppCompatActivity{
         setContentView(R.layout.activity_login);
 
         mAuth = FirebaseAuth.getInstance();
-
-
-        //msignIn = (Button) findViewById(R.id.signin);
+        msignIn = (Button) findViewById(R.id.signin);
         mGoogleBtn = (SignInButton) findViewById(R.id.googleBtn);
+        emailAddressInput = (EditText)findViewById(R.id.emailAddressInput);
+        emailAddressText = (TextView)findViewById(R.id.emailAddressText);
+        passwordText = (TextView)findViewById(R.id.passwordText);
+        passwordInput = (EditText)findViewById(R.id.passwordInput);
+        logSuccess = false;
 
         //new code
         // Configure Google Sign In
@@ -72,18 +80,18 @@ public class LoginActivity extends AppCompatActivity{
                 signIn();
             }
         });
-        Log.d("KNF", "HERE1");
+
         //this is for username and passwork textfields
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
-                Log.d("KNF", "HERE3");
+
                 if (user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                     startActivity(new Intent(LoginActivity.this, HomeF.class));
-                    Log.d("KNF", "HERE4");
+
 
                 } else {
                     // User is signed out
@@ -92,19 +100,24 @@ public class LoginActivity extends AppCompatActivity{
                 // ...
             }
         };
-        Log.d("KNF", "HERE2");
-    }
 
-        /*
-        //this is for username and passwork textfields
+
         msignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(MainActivity.this, ListOfItemsActivity.class);
-                startActivity(i);
+
+                signInWithEmailAndPassword(emailAddressInput.getText().toString(), passwordInput.getText().toString());
+                if(logSuccess){
+                    Intent i = new Intent(LoginActivity.this, HomeF.class);
+                    startActivity(i);
+                }
+
             }
         });
-    }*/
+        //this is for username and passwork textfields
+
+    }
+
 
     //new method
     private void signIn() {
@@ -169,17 +182,17 @@ public class LoginActivity extends AppCompatActivity{
         }
     }
 
-    /*
+
     //this is for username and passwork textfields
     public void createUserWithEmailAndPassword(String email, String password) {
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
-            public void onComplete(@NonNull Data<AuthResult> task) {
+            public void onComplete(@NonNull Task<AuthResult> task) {
                 Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
 
                 // Sign in success, update UI with the signed-in user's information
                 if (task.isSuccessful()) {
-                    Toast.makeText(MainActivity.this, "Login is successful",
+                    Toast.makeText(LoginActivity.this, "Login is successful",
                             Toast.LENGTH_SHORT).show();
 
                     FirebaseUser user = mAuth.getCurrentUser();
@@ -187,7 +200,7 @@ public class LoginActivity extends AppCompatActivity{
                 }
                 else {
                     Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                    Toast.makeText(MainActivity.this, "Authentication failed.",
+                    Toast.makeText(LoginActivity.this, "Authentication failed.",
                             Toast.LENGTH_SHORT).show();
                     //updateUI(null);
                 }
@@ -200,60 +213,40 @@ public class LoginActivity extends AppCompatActivity{
     public void signInWithEmailAndPassword(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Data<AuthResult> task) {
-                        Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
 
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "signInWithEmail:failed", task.getException());
-                            Toast.makeText(MainActivity.this, "Sign in Failed!!!!",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                        else {
-                            Toast.makeText(MainActivity.this, "Sign in Success",
-                                    Toast.LENGTH_SHORT).show();
-                        }
+                                // If sign in fails, display a message to the user. If sign in succeeds
+                                // the auth state listener will be notified and logic to handle the
+                                // signed in user can be handled in the listener.
+                                if (!task.isSuccessful()) {
+                                    logSuccess = false;
+                                    Log.w(TAG, "signInWithEmail:failed", task.getException());
+                                    Toast.makeText(LoginActivity.this, "Sign in Failed!!!!",
+                                            Toast.LENGTH_SHORT).show();
+                                } else {
+                                    logSuccess = true;
+                                    Toast.makeText(LoginActivity.this, "Sign in Success",
+                                            Toast.LENGTH_SHORT).show();
+                                }
 
-                        // ...
-                    }
-                /*.addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Data<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithEmail:success");
-                            //FirebaseUser user = mAuth.getCurrentUser();
-                            //updateUI(user);
-                            Toast.makeText(MainActivity.this, "Sign in Success!",
-                                    Toast.LENGTH_LONG).show();
-                            //create an intent that would take the user to the ListOfItemsActivity
-                            Intent i = new Intent(MainActivity.this, ListOfItemsActivity.class);
-                            startActivity(i);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(MainActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();             //remember to change MainActivity.this to the name of the activity that contains these methods
-                            updateUI(null);
-                        }
-                        // ...
-                    }
-                });
-    }*/
-
-    //this is for username and passwork textfields
-    public void signOut() {
-        FirebaseAuth.getInstance().signOut();
-    }
-
-    //this is for username and passwork textfields
-    public void updateUI(FirebaseUser user){
-
+                                // ...
+                            }
+                        });
     }
 
 
+
+    //this is for username and passwork textfields
+
+
+    //this is for username and passwork textfields
+    public void updateUI(FirebaseUser user) {
+
+    }
 }
+
+
+
 

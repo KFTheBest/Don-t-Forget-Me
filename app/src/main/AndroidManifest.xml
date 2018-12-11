@@ -13,8 +13,8 @@
         android:theme="@style/AppTheme">
         <activity android:name=".CreateList" />
         <activity android:name=".ViewList" />
-        <activity android:name=".MyLocation" />
-        <activity android:name=".LoginActivity">
+        <activity android:name=".LocationSettings" />
+        <activity android:name=".WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,10 +25,11 @@
             android:name=".HomeF"
             android:label="@string/title_activity_home_f"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".AccSettingsActivity"
-            android:label="@string/title_activity_acc_settings" />
-        <activity android:name=".AddressActivity"></activity>
+        <activity android:name=".AddressActivity" />
+        <activity android:name=".RegisterActivity" />
+        <activity android:name=".AccSettingsActivity" />
+        <activity android:name=".LoginActivity" />
+        <service android:name=".NotificationService"/>
     </application>
 
 </manifest>
