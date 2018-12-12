@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:orientation="vertical"
@@ -8,40 +8,79 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/emailAddressText"
-        android:text="Email Address"/>
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/emailAddressInput"
-        android:hint="Enter Email Address Here!"/>
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="36dp"
+        android:gravity="center"
+        android:text="Please enter login credentials or use Google Sign In!" />
 
     <TextView
+        android:id="@+id/emailAddressText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/passwordText"
-        android:text="Password"/>
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="97dp"
+        android:gravity="center"
+        android:text="Email Address" />
 
     <EditText
+        android:id="@+id/emailAddressInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="121dp"
+        android:hint="Enter Email Address Here!" />
+
+    <TextView
+        android:id="@+id/passwordText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="178dp"
+        android:gravity="center"
+        android:text="Password" />
+
+    <EditText
         android:id="@+id/passwordInput"
-        android:hint="Enter Password Here!"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="211dp"
+        android:hint="Enter Password Here!" />
 
     <Button
+        android:id="@+id/signin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/signin"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="275dp"
+        android:layout_marginBottom="246dp"
         android:background="@android:color/holo_green_light"
-        android:text="Log In!"/>
+        android:text="Log In!" />
 
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/googleBtn"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="334dp"
+        android:layout_marginBottom="190dp">
 
     </com.google.android.gms.common.SignInButton>
 
-</LinearLayout>
+</RelativeLayout>
