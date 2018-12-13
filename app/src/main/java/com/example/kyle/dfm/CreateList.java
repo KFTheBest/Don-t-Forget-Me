@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -17,19 +19,21 @@ import android.widget.Toast;
 
 
 public class CreateList extends AppCompatActivity {
+    TextInputLayout textInputLayout;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_list);
+        textInputLayout = findViewById(R.id.createListInput);
 
 
     }
 
     public void saveButtonClicked(View v){
-        String messageText = ((EditText)findViewById(R.id.message)).getText().toString();
-
+        String messageText = textInputLayout.getEditText().getText().toString();
         if(messageText.equals("") || messageText.length() == 0 || messageText==null){
             Toast.makeText(CreateList.this, "Please enter an item to be saved!", Toast.LENGTH_LONG).show();
         }

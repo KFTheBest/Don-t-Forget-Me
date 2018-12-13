@@ -9,6 +9,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -42,13 +43,23 @@ public class AddressActivity extends AppCompatActivity implements GoogleApiClien
 
     String address1Text;
 
+    TextInputLayout address1Lay;
+
     String address2Text;
+
+    TextInputLayout address2Lay;
 
     String cityText;
 
+    TextInputLayout addressCityLay;
+
     String stateText;
 
+    TextInputLayout addressStateLay;
+
     String zipcodeText;
+
+    TextInputLayout addressZipLay;
 
     private static final int MY_PERMISSION_REQUEST_CODE = 7171;
 
@@ -116,6 +127,14 @@ public class AddressActivity extends AppCompatActivity implements GoogleApiClien
                 saveLocation();
             }
         });
+
+        address1Lay = findViewById(R.id.address1input);
+        address2Lay = findViewById(R.id.address2input);
+        addressCityLay = findViewById(R.id.addressCityInput);
+        addressStateLay = findViewById(R.id.addressStateInput);
+        addressZipLay = findViewById(R.id.addressZipInput);
+
+
     }
 
     @Override
@@ -308,15 +327,15 @@ public class AddressActivity extends AppCompatActivity implements GoogleApiClien
 
     public void saveButtonClicked(View v){
 
-        address1Text = ((EditText)findViewById(R.id.address1input)).getText().toString();
+        address1Text = address1Lay.getEditText().getText().toString();
 
-        address2Text = ((EditText)findViewById(R.id.address2input)).getText().toString();
+        address2Text = address2Lay.getEditText().getText().toString();
 
-        cityText = ((EditText)findViewById(R.id.cityinput)).getText().toString();
+        cityText = addressCityLay.getEditText().getText().toString();
 
-        stateText = ((EditText)findViewById(R.id.stateinput)).getText().toString();
+        stateText = addressStateLay.getEditText().getText().toString();
 
-        zipcodeText = ((EditText)findViewById(R.id.zipcodeinput)).getText().toString();
+        zipcodeText = addressZipLay.getEditText().getText().toString();
 
         if(address1Text.equals("") || address1Text.length() == 0 || address1Text==null){
 
