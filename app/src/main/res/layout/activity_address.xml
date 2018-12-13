@@ -156,13 +156,6 @@
         android:text="Auto-Detect Location!"
         android:textSize="20sp" />
 
-    <Spinner
-        android:id="@+id/addressSpin"
-        android:layout_width="match_parent"
-
-        android:layout_height="wrap_content">
-
-    </Spinner>
 
 
 </RelativeLayout>

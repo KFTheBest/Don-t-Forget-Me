@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -23,7 +24,7 @@ public class AccSettingsActivity extends AppCompatActivity {
     private Button deleteAcc;
     private Button deleteData;
     private Button finishedAcc;
-    private TextView accSettText;
+    private CardView accSettText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +35,7 @@ public class AccSettingsActivity extends AppCompatActivity {
         deleteAcc = (Button)findViewById(R.id.deleteAcc);
         deleteData = (Button)findViewById(R.id.deleteData);
         finishedAcc = (Button)findViewById(R.id.finishedAcc);
-        accSettText = (TextView) findViewById(R.id.accSettText);
+        accSettText =  (CardView)findViewById(R.id.accSettText);
 
         logOut.setOnClickListener(new View.OnClickListener() {
 
@@ -42,9 +43,11 @@ public class AccSettingsActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 FirebaseAuth.getInstance().signOut();
-                Intent logOut = new Intent(AccSettingsActivity.this,LoginActivity.class);
 
-                startActivity(logOut);
+                Intent welcome = new Intent(AccSettingsActivity.this,WelcomeActivity.class);
+
+                startActivity(welcome);
+
 
             }
         });

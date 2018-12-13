@@ -14,7 +14,6 @@ import android.support.v4.app.FragmentManager;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -171,11 +170,9 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
         dataName = (TextView)findViewById(R.id.dataName);
 
-        //final Spinner spinner = (Spinner) findViewById(R.id.addressSpin);
-
         addList = new ArrayList<>();
 
-        //adapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,arrayList);
+        //
 
         AddressSource.get(HomeF.this).getAddress(new AddressSource.AddressListener() {
             @Override
