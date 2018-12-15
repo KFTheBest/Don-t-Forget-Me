@@ -65,7 +65,6 @@
         <Button
             android:layout_width="wrap_content"
             android:id="@+id/startBtn"
-            android:text="Start"
             android:layout_height="wrap_content" />
 
 

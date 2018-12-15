@@ -1,10 +1,19 @@
 package com.example.kyle.dfm;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.Instrumentation;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -15,6 +24,8 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
@@ -46,7 +57,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeF extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener{
+        GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private android.widget.TextView userMessage; //Good day message to user
 
@@ -62,8 +73,6 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
     TextView dataName;
 
-    String usrLocation ;
-
     String lat = "";
 
     String lon = "";
@@ -76,11 +85,11 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
     Double currLongitude;
 
+    Boolean stopped = false;
+
     List<AddressData> mAddData;
 
     ArrayList<AddressData> addList;
-
-    //ArrayAdapter<String> adapter;
 
     private static final int MY_PERMISSION_REQUEST_CODE = 7171;
 
@@ -94,11 +103,17 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
     private Location mLastLocation;
 
+    private Boolean toogle = false;
+
     private static int UPDATE_INTERVAL = 5000; // SEC
 
     private static int FATEST_INTERVAL = 3000; // SEC
 
     private static int DISPLACEMENT = 10; // METERS
+
+    NotificationManagerCompat notificationManagerCompat;
+
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,9 +144,9 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        userMessage = (TextView)findViewById(R.id.userMessage);
+        userMessage = (TextView) findViewById(R.id.userMessage);
 
-        itemCheck =  (TextView)findViewById(R.id.itemCheck);
+        itemCheck = (TextView) findViewById(R.id.itemCheck);
 
         setSupportActionBar(toolbar);
 
@@ -151,28 +166,30 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
         itemCheck.setText("Make sure you have all of you necessary items.");
 
-        listView = (ListView)findViewById(R.id.listItem);
+        listView = (ListView) findViewById(R.id.listItem);
 
         arrayList = new ArrayList<>();
 
         arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, arrayList);
 
-        DataSource.get(HomeF.this).getData(new DataSource.DataListener(){
+        DataSource.get(HomeF.this).getData(new DataSource.DataListener() {
 
             @Override
-            public void onDataReceived(List<Data>data){
+            public void onDataReceived(List<Data> data) {
 
                 mData = data;
 
-                listView.setAdapter(new DataAdapter(HomeF.this, R.layout.list_view_data,data));
+                listView.setAdapter(new DataAdapter(HomeF.this, R.layout.list_view_data, data));
             }
         });
 
-        dataName = (TextView)findViewById(R.id.dataName);
+        dataName = (TextView) findViewById(R.id.dataName);
 
         addList = new ArrayList<>();
 
         //
+
+        handler = new Handler();
 
         AddressSource.get(HomeF.this).getAddress(new AddressSource.AddressListener() {
             @Override
@@ -180,48 +197,69 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
                 mAddData = items;
 
-                //spinner.setAdapter(new AddressAdapter(HomeF.this,R.layout.support_simple_spinner_dropdown_item,items));
-
             }
         });
 
-        /*adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        spinner.setAdapter(adapter);
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        final Button startBtn = (Button) findViewById(R.id.startBtn);
 
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        startBtn.setText("Start!");
 
-                AddressData addressData = (AddressData)parent.getItemAtPosition(position);
-
-                usrLocation = addressData.getAddressName();
-                onLocChange(usrLocation);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        }); */
-
-        Button startBtn = (Button)findViewById(R.id.startBtn);
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onLocChange(usrLocation);
+
+                if (toogle == false) {
+
+                    toogle = true;
+
+                    startBtn.setText("Stop!");
+
+                    final boolean change = toogle;
+
+                    new Thread() {
+                        @Override
+                        public void run() {
+
+                            while (change) {
+
+                                 if(!inRange()){
+
+                                     runOnUiThread(new Runnable() {
+
+                                         @Override
+                                         public void run() {
+                                             showAlert(inRange());
+                                             toogle = false;
+
+                                             Toast.makeText(getApplicationContext(), "Service has been stopped", Toast.LENGTH_LONG).show();
+
+                                             startBtn.setText("Start!");
+                                         }
+                                     });
+
+
+
+                                 }
+
+                            }
+                        }
+                    }.start();
+
+                } else {
+
+                    toogle = false;
+
+                    Toast.makeText(getApplicationContext(), "Service has been stopped", Toast.LENGTH_LONG).show();
+
+                    startBtn.setText("Start!");
+                }
+
             }
         });
 
-       /* new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(true){
-                    onLocChange(usrLocation);
-                }
-            }
-        }).start();*/
-
+        notificationManagerCompat = NotificationManagerCompat.from(this);
 
     }
 
@@ -287,25 +325,25 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
         if (id == R.id.nav_camera) {
 
-            Intent viewList = new Intent(HomeF.this,ViewList.class);
+            Intent viewList = new Intent(HomeF.this, ViewList.class);
 
             startActivity(viewList);
 
-        }else if (id == R.id.nav_address) {
+        } else if (id == R.id.nav_address) {
 
-            Intent address = new Intent(HomeF.this,AddressActivity.class);
+            Intent address = new Intent(HomeF.this, AddressActivity.class);
 
             startActivity(address);
 
-        }else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_share) {
 
-            Intent alarm = new Intent(HomeF.this,LocationSettings.class);
+            Intent alarm = new Intent(HomeF.this, LocationSettings.class);
 
             startActivity(alarm);
 
         } else if (id == R.id.nav_send) {
 
-            Intent accSettings = new Intent(HomeF.this,AccSettingsActivity.class);
+            Intent accSettings = new Intent(HomeF.this, AccSettingsActivity.class);
 
             startActivity(accSettings);
 
@@ -331,26 +369,47 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
         super.onStart();
 
-        if(mGoogleApiClient != null) {
+        if (mGoogleApiClient != null) {
 
             mGoogleApiClient.connect();
         }
+
+        stopped = false;
+
+
 
     }
 
     @Override
     protected void onStop() {
 
-        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient,this);
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 
         stopLocationUpdates();
 
-        if(mGoogleApiClient != null) {mGoogleApiClient.disconnect();}
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.disconnect();
+        }
+        stopped = true;
 
-        Intent intent = new Intent(this,NotificationService.class);
-        startService(intent);
+        if(stopped) {
+
+        }
 
         super.onStop();
+    }
+
+
+    private void startNotif(){
+        Intent i = new Intent(this, NotificationService.class);
+        startService(i);
+    }
+
+    private void stopNotif(){
+
+        Intent i = new Intent(this, NotificationService.class);
+        stopService(i);
+
     }
 
     private void createLocationRequest() {
@@ -413,13 +472,13 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
     private void stopLocationUpdates() {
 
-        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient,this);
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
     }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
-        if(mRequestingLocationUpdates)
+        if (mRequestingLocationUpdates)
 
             startLocationUpdates();
     }
@@ -437,12 +496,11 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
     @Override
     public void onLocationChanged(Location location) {
 
-        if(location != mLastLocation){
+        if (location != mLastLocation) {
 
             mLastLocation = location;
 
-        }
-        else{
+        } else {
 
             currLatitude = mLastLocation.getLatitude();
 
@@ -451,90 +509,118 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
     }
 
-    public void onLocChange(String location) {
+    private void showAlert(boolean range){
+        if(!range && !stopped){
 
-        lat = "";
+            final AlertDialog.Builder dialog = new AlertDialog.Builder(HomeF.this);
 
-        lon = "";
+            dialog.setTitle("Final Check").
 
-        if(location == "" || location == null){
+                    setMessage("Do you have everything you need?").
 
-            Log.d("Deletion", "We out dis bih");
+                    setPositiveButton("Open my list to check. Just in case.",
 
-            return;
+                            new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick (DialogInterface dialog,int which){
+
+                                    Intent intent = new Intent(HomeF.this, ViewList.class);
+
+                                    startActivity(intent);
+                                }
+                            }).
+
+                    setNegativeButton("Yes, I do! Thank You!",new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick (DialogInterface dialog,int which){
+
+                        }
+                    });
+
+            dialog.show();
+
         }
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+        else if (!range && stopped){
+            startNotif();
         }
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        Log.d("Cremae", "We in dis bih");
-        if (mLastLocation != null) {
+    }
 
-            Log.d("Cremaee", "We really in dis bih");
+    private Boolean inRange() {
 
-            currLatitude = mLastLocation.getLatitude();
+        Boolean mInRange = true;
 
-            currLongitude = mLastLocation.getLongitude();
+        SharedPreferences sharedAdd = PreferenceManager.getDefaultSharedPreferences(this);
 
-            /*String[] parts = location.split(",", 2);
+        SharedPreferences shareRad = PreferenceManager.getDefaultSharedPreferences(this);
 
-            lat = parts[0];
+        final String location = sharedAdd.getString("Address", "Error");
 
-            lon = parts[1];
+        final int radius = shareRad.getInt("Radius", 50);
 
-            setLatitude = Double.parseDouble(lat);
+        if (toogle) {
 
-            setLongitude = Double.parseDouble(lon);
-            */
+            lat = "";
 
-            setLatitude =  40.598300;
-            setLongitude = -73.762960;
+            lon = "";
 
-            float[] dist = new float[1];
+            if (location == "" || location == null) {
 
-            Log.d("myLat", setLatitude.toString());
+                Log.d("Deletion", "We out dis bih");
 
-            Log.d("myLon", setLongitude.toString());
+                return true;
+            }
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
 
-            Log.d("CurrLat", currLatitude.toString());
+                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return true;
+            }
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            Log.d("Cremae", "We in dis bih");
+            if (mLastLocation != null) {
 
-            Log.d("CurrLon", currLongitude.toString());
+                Log.d("Cremaee", "We really in dis bih");
 
-            Location.distanceBetween(setLatitude, setLongitude, currLatitude, currLongitude, dist);
+                currLatitude = mLastLocation.getLatitude();
 
-            if (dist[0] / 100 > 1) {
+                currLongitude = mLastLocation.getLongitude();
 
-                final AlertDialog.Builder dialog = new AlertDialog.Builder(HomeF.this);
+                String[] parts = location.split(",", 2);
 
-                dialog.setTitle("Final Check").setMessage("Do you have everything you need?").setPositiveButton("Open my list to check. Just in case.",
+                lat = parts[0];
 
-                        new DialogInterface.OnClickListener() {
+                lon = parts[1];
 
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                setLatitude = Double.parseDouble(lat);
 
-                                Intent intent = new Intent(HomeF.this, ViewList.class);
+                setLongitude = Double.parseDouble(lon);
 
-                                startActivity(intent);
-                            }
-                        }).setNegativeButton("Yes, I do! Thank You!", new DialogInterface.OnClickListener() {
+                //setLatitude =  45.598300;
+                //setLongitude = -40.762960;
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                final float[] dist = new float[1];
 
-                    }
-                });
+                Log.d("myLat", setLatitude.toString());
 
-                dialog.show();
+                Log.d("myLon", setLongitude.toString());
+
+                Log.d("CurrLat", currLatitude.toString());
+
+                Log.d("CurrLon", currLongitude.toString());
+
+                Location.distanceBetween(setLatitude, setLongitude, currLatitude, currLongitude, dist);
+
+                if (dist[0] / radius > 1) {
+
+                    Log.d("RadChekc", "INNNNNN");
+
+                    mInRange = false;
+
+
+                }
             }
         }
-        else{
-
-            Log.d("Cremaett", "Check local not gud");
-
-        }
+        return mInRange;
     }
-
 }

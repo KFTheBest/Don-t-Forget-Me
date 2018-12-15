@@ -2,6 +2,8 @@ package com.example.kyle.dfm;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -45,9 +47,13 @@ public class LocationSettings extends AppCompatActivity {
 
     ArrayList<Integer>radiusArray;
 
-    public int defaultRadius = 50;
+    private int defaultRadius = 50;
 
-    public String defaultAddress;
+    private String defaultAddress;
+
+    SharedPreferences prefAdd;
+
+    SharedPreferences prefRad;
 
     ArrayList<String>convertedAddresses;
 
@@ -80,6 +86,16 @@ public class LocationSettings extends AppCompatActivity {
 
         radiusArray.add(100);
 
+        prefAdd = PreferenceManager.getDefaultSharedPreferences(this);
+
+        prefRad = PreferenceManager.getDefaultSharedPreferences(this);
+
+        final SharedPreferences.Editor editor2 = prefRad.edit();
+
+        editor2.putInt("Radius",defaultRadius);
+
+        editor2.commit();
+
         arrayList = new ArrayList<>();
 
         adapterAddress = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, arrayList);
@@ -97,6 +113,10 @@ public class LocationSettings extends AppCompatActivity {
                 if(!items.isEmpty()) {
 
                     defaultAddress = items.get(0).getAddressName();
+
+                    SharedPreferences.Editor editor = prefAdd.edit();
+                    editor.putString("Address",defaultAddress);
+                    editor.commit();
                 }
                 else{
 
@@ -154,6 +174,9 @@ public class LocationSettings extends AppCompatActivity {
 
                 defaultRadius = (int) parent.getItemAtPosition(position);
 
+                editor2.putInt("Radius", defaultRadius);
+                editor2.commit();
+
             }
 
             @Override
@@ -182,5 +205,6 @@ public class LocationSettings extends AppCompatActivity {
 
             }
         });
+
     }
 }
