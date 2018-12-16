@@ -115,6 +115,13 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
     private Handler handler;
 
+    SharedPreferences shared;
+
+    private String location;
+
+    int radius;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -259,7 +266,14 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
             }
         });
 
+
+
         notificationManagerCompat = NotificationManagerCompat.from(this);
+        shared = PreferenceManager.getDefaultSharedPreferences(this);
+        final String address = shared.getString("Address", "Error,Error");
+        final int rad = shared.getInt("Radius", 50);
+        location = address;
+        radius = rad;
 
     }
 
@@ -304,18 +318,7 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
 
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -551,26 +554,19 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
         Boolean mInRange = true;
 
-        SharedPreferences sharedAdd = PreferenceManager.getDefaultSharedPreferences(this);
-
-        SharedPreferences shareRad = PreferenceManager.getDefaultSharedPreferences(this);
-
-        final String location = sharedAdd.getString("Address", "Error");
-
-        final int radius = shareRad.getInt("Radius", 50);
-
         if (toogle) {
 
             lat = "";
 
             lon = "";
 
-            if (location == "" || location == null) {
+            if (location == "" || location == null ) {
 
                 Log.d("Deletion", "We out dis bih");
 
                 return true;
             }
+
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
 
                     && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -592,9 +588,12 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
                 lon = parts[1];
 
-                setLatitude = Double.parseDouble(lat);
 
-                setLongitude = Double.parseDouble(lon);
+                if(setLatitude == null || setLatitude.toString() == "" || setLongitude == null || setLongitude.toString() =="") {
+                    setLatitude = Double.parseDouble(lat);
+
+                    setLongitude = Double.parseDouble(lon);
+                }
 
                 //setLatitude =  45.598300;
                 //setLongitude = -40.762960;

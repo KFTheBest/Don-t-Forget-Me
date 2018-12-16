@@ -91,47 +91,79 @@ public class ViewLocal extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                AlertDialog.Builder adb = new AlertDialog.Builder(ViewLocal.this);
 
-                adb.setTitle("Delete?");
+                if (mData.size() == 1) {
 
-                adb.setMessage("Are you sure you want to delete " + mData.get(i).getAddressName()+ " ?");
+                    AlertDialog.Builder adb = new AlertDialog.Builder(ViewLocal.this);
 
-                final int positionToRemove = i;
+                    adb.setTitle("Delete?");
 
-                adb.setNegativeButton("Cancel", null);
+                    adb.setMessage("Hold On! You can't delete " + mData.get(i).getAddressName() + " because there needs to be at least one address saved! " +
+                            "Please add another before deleting this one!");
 
-                adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
+                    final int positionToRemove = i;
 
-                    public void onClick(DialogInterface dialog, int which) {
+                    adb.setNegativeButton("Cancel", null);
 
-                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                    adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
 
-                        Query itemQuery = ref.child("addressData").orderByChild("mAddressName").equalTo(mData.get(positionToRemove).getAddressName());
+                        public void onClick(DialogInterface dialog, int which) {
+                        Intent intent2 = new Intent(ViewLocal.this, AddressActivity.class);
+                        startActivity(intent2);
 
-                        itemQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                        }
+                    });
+                    adb.show();
 
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                for (DataSnapshot itemSnapshot: dataSnapshot.getChildren()) {
 
-                                    itemSnapshot.getRef().removeValue();
+                } else {
 
-                                    arrayAdapter.notifyDataSetChanged();
+                    AlertDialog.Builder adb = new AlertDialog.Builder(ViewLocal.this);
+
+                    adb.setTitle("Delete?");
+
+                    adb.setMessage("Are you sure you want to delete " + mData.get(i).getAddressName() + " ?");
+
+                    final int positionToRemove = i;
+
+                    adb.setNegativeButton("Cancel", null);
+
+                    adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+
+                            Query itemQuery = ref.child("addressData").orderByChild("mAddressName").equalTo(mData.get(positionToRemove).getAddressName());
+
+                            itemQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                    for (DataSnapshot itemSnapshot : dataSnapshot.getChildren()) {
+
+                                        itemSnapshot.getRef().removeValue();
+
+                                        arrayAdapter.notifyDataSetChanged();
+                                    }
                                 }
-                            }
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
 
-                            }
-                        });
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
 
-                    }});
-                adb.show();
+                                }
+                            });
 
-                return false;
-            }
+                        }
+                    });
+                    adb.show();
+                }
+
+                    return false;
+                }
+
         });
 
     }
