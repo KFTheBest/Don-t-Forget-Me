@@ -11,7 +11,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -34,6 +41,10 @@ public class AccSettingsActivity extends AppCompatActivity {
 
     private SharedPreferences prefAcc;
 
+    private GoogleApiClient mGoogleApiClient;
+
+    private FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -51,14 +62,40 @@ public class AccSettingsActivity extends AppCompatActivity {
 
         accSettText =  (CardView)findViewById(R.id.accSettText);
 
+        mAuth = FirebaseAuth.getInstance();
+
         prefAcc = PreferenceManager.getDefaultSharedPreferences(this);
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(getApplicationContext())
+                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                        Toast.makeText(AccSettingsActivity.this, "You got an error", Toast.LENGTH_LONG).show();
+                    }
+                })
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
 
         logOut.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
 
-                FirebaseAuth.getInstance().signOut();
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>()
+                {
+                     @Override
+                     public void onResult(@NonNull Status status)
+                     {
+                         mAuth.signOut();
+
+                     }
+
+                 });
 
                 SharedPreferences.Editor editor = prefAcc.edit();
 
