@@ -53,9 +53,9 @@ public class LocationSettings extends AppCompatActivity {
 
     SharedPreferences prefAdd;
 
-    SharedPreferences prefRad;
-
     ArrayList<String>convertedAddresses;
+
+    private int radPos = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,17 +88,17 @@ public class LocationSettings extends AppCompatActivity {
 
         prefAdd = PreferenceManager.getDefaultSharedPreferences(this);
 
-        prefRad = PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences.Editor editor = prefAdd.edit();
 
-        final SharedPreferences.Editor editor2 = prefRad.edit();
+        editor.putInt("Radius",defaultRadius);
 
-        editor2.putInt("Radius",defaultRadius);
-
-        editor2.commit();
+        editor.commit();
 
         arrayList = new ArrayList<>();
 
         adapterAddress = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, arrayList);
+
+
 
         AddressSource.get(LocationSettings.this).getAddress(new AddressSource.AddressListener() {
 
@@ -112,11 +112,18 @@ public class LocationSettings extends AppCompatActivity {
 
                 if(!items.isEmpty()) {
 
-                    defaultAddress = items.get(0).getAddressName();
+                    if(!prefAdd.contains("Address")) {
 
-                    SharedPreferences.Editor editor = prefAdd.edit();
-                    editor.putString("Address",defaultAddress);
-                    editor.commit();
+                        defaultAddress = items.get(0).getAddressName();
+
+
+                        editor.putString("Address", defaultAddress);
+
+                        editor.commit();
+                    }
+                    else{
+                        defaultAddress = prefAdd.getString("Address", "Error,Error");
+                    }
                 }
                 else{
 
@@ -154,6 +161,18 @@ public class LocationSettings extends AppCompatActivity {
                 AddressData addressData = (AddressData)parent.getItemAtPosition(position);
 
                 defaultAddress = addressData.getAddressName();
+
+                radPos = position;
+
+                editor.remove("Address");
+
+                editor.putString("Address",defaultAddress);
+
+                editor.commit();
+
+
+
+
             }
 
             @Override
@@ -167,15 +186,23 @@ public class LocationSettings extends AppCompatActivity {
 
         changeRadius.setAdapter(adapterRadius);
 
+
+
         changeRadius.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(final AdapterView<?> parent, final View view, final int position, long id) {
 
                 defaultRadius = (int) parent.getItemAtPosition(position);
 
-                editor2.putInt("Radius", defaultRadius);
-                editor2.commit();
+
+
+                editor.remove("Radius");
+
+                editor.putInt("Radius", defaultRadius);
+
+                editor.commit();
+
 
             }
 
@@ -205,6 +232,20 @@ public class LocationSettings extends AppCompatActivity {
 
             }
         });
+
+    }
+
+    @Override
+    protected void onStart() {
+
+        super.onStart();
+
+      defaultRadius = prefAdd.getInt("Radius", 50);
+
+      changeRadius.setSelection(radPos);
+
+      defaultAddress = prefAdd.getString("Address", "Error,Error");
+
 
     }
 }

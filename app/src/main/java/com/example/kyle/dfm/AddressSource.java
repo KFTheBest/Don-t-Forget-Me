@@ -2,8 +2,12 @@ package com.example.kyle.dfm;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -38,7 +42,13 @@ public class AddressSource {
 
     //Firebase methods
     public void getAddress(final AddressListener addressListener) {
-        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("addressData");
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        final String iD = user.getUid();
+
+        final DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference(iD).child("addressData");
+
         //DatabaseReference itemsRef = databaseRef.child("addressData");
 
         databaseRef.addValueEventListener(new ValueEventListener() {
@@ -48,6 +58,7 @@ public class AddressSource {
                 List<AddressData> addressData = new ArrayList<>();
                 for (DataSnapshot itemSnapshot: iter) {
                     //String description = itemSnapshot.child("mDataName").getValue(String.class);
+
                     AddressData addressData1 = new AddressData(itemSnapshot);
                     addressData.add(addressData1);
 
@@ -64,17 +75,20 @@ public class AddressSource {
     }
 
     public void sendAddress(AddressData addressData) {
-        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("addressData");
-        //DatabaseReference addressRef = databaseRef.child("addressData");
-        DatabaseReference newAddressRef = databaseRef.push();
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String iD = user.getUid();
+
+        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference(iD).child("addressData");
+        DatabaseReference addressRef = databaseRef.push();
 
         Map<String, Object> addressValMap = new HashMap<>();
         addressValMap.put("mAddressName", addressData.getAddressName());
-        newAddressRef.setValue(addressValMap, new DatabaseReference.CompletionListener() {
+        addressRef.setValue(addressValMap, new DatabaseReference.CompletionListener() {
             @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                 if (databaseError == null) {
-                    Toast.makeText(mContext, "AddressData has been posted!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Address Data has been posted!", Toast.LENGTH_SHORT).show();
 
                 }
             }

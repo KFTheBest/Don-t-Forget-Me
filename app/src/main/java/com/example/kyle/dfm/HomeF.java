@@ -119,7 +119,7 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
     private String location;
 
-    int radius;
+    Integer radius;
 
 
     @Override
@@ -217,63 +217,99 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
             @Override
             public void onClick(View v) {
 
-                if (toogle == false) {
+                if (!(mAddData.isEmpty())) {
 
-                    toogle = true;
+                    if (toogle == false) {
 
-                    startBtn.setText("Stop!");
+                        toogle = true;
 
-                    final boolean change = toogle;
+                        startBtn.setText("Stop!");
 
-                    new Thread() {
-                        @Override
-                        public void run() {
+                        final boolean change = toogle;
 
-                            while (change) {
+                        new Thread() {
+                            @Override
+                            public void run() {
 
-                                 if(!inRange()){
+                                while (change) {
 
-                                     runOnUiThread(new Runnable() {
+                                    if (!inRange()) {
 
-                                         @Override
-                                         public void run() {
-                                             showAlert(inRange());
-                                             toogle = false;
+                                        runOnUiThread(new Runnable() {
 
-                                             Toast.makeText(getApplicationContext(), "Service has been stopped", Toast.LENGTH_LONG).show();
+                                            @Override
+                                            public void run() {
+                                                showAlert(inRange());
+                                                toogle = false;
 
-                                             startBtn.setText("Start!");
-                                         }
-                                     });
+                                                Toast.makeText(getApplicationContext(), "Service has been stopped", Toast.LENGTH_LONG).show();
+
+                                                startBtn.setText("Start!");
+                                            }
+                                        });
 
 
+                                    }
 
-                                 }
-
+                                }
                             }
-                        }
-                    }.start();
+                        }.start();
 
-                } else {
+                    } else {
 
-                    toogle = false;
+                        toogle = false;
 
-                    Toast.makeText(getApplicationContext(), "Service has been stopped", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Service has been stopped", Toast.LENGTH_LONG).show();
 
-                    startBtn.setText("Start!");
+                        startBtn.setText("Start!");
+                    }
+
                 }
 
+                else{
+
+                    final AlertDialog.Builder dialog = new AlertDialog.Builder(HomeF.this);
+
+                    dialog.setTitle("Alert!").
+
+                            setMessage("There are no addresses saved! Please go add one!").
+
+                            setPositiveButton("Add a location",
+
+                                    new DialogInterface.OnClickListener() {
+
+                                        @Override
+                                        public void onClick (DialogInterface dialog,int which){
+
+                                            Intent intent = new Intent(HomeF.this, AddressActivity.class);
+
+                                            startActivity(intent);
+                                        }
+                                    }).
+
+                            setNegativeButton("Cancel",null);
+
+                    dialog.show();
+
+                }
             }
         });
 
 
 
         notificationManagerCompat = NotificationManagerCompat.from(this);
+
         shared = PreferenceManager.getDefaultSharedPreferences(this);
+
         final String address = shared.getString("Address", "Error,Error");
+
         final int rad = shared.getInt("Radius", 50);
+
         location = address;
+
         radius = rad;
+
+
 
     }
 
@@ -379,12 +415,16 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
         stopped = false;
 
+        stopNotif();
+
 
 
     }
 
     @Override
     protected void onStop() {
+
+        //if(!mGoogleApiClient.isConnected())
 
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 
@@ -394,10 +434,6 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
             mGoogleApiClient.disconnect();
         }
         stopped = true;
-
-        if(stopped) {
-
-        }
 
         super.onStop();
     }
@@ -607,6 +643,10 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
                 Log.d("CurrLat", currLatitude.toString());
 
                 Log.d("CurrLon", currLongitude.toString());
+
+                //Log.d("Rad", toString(radius) );
+
+                Log.d(getClass().getName(), "value = " + radius);
 
                 Location.distanceBetween(setLatitude, setLongitude, currLatitude, currLongitude, dist);
 

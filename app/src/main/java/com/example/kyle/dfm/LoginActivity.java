@@ -1,7 +1,9 @@
 package com.example.kyle.dfm;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -27,22 +29,32 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 public class LoginActivity extends AppCompatActivity{
+
     private FirebaseAuth mAuth;
+
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     private final String TAG = "auth";
 
-    //Google Button
     private SignInButton mGoogleBtn;
+
     private static final int RC_SIGN_IN = 1;
+
     private GoogleApiClient mGoogleApiClient;
+
     private Button msignIn;
 
     private TextView emailAddressText;
+
     private TextView passwordText;
+
     private EditText passwordInput;
+
     private EditText emailAddressInput;
+
     private boolean logSuccess;
+
+    public SharedPreferences preferences;
 
 
     @Override
@@ -51,13 +63,25 @@ public class LoginActivity extends AppCompatActivity{
         setContentView(R.layout.activity_login);
 
         mAuth = FirebaseAuth.getInstance();
+
         msignIn = (Button) findViewById(R.id.signin);
+
         mGoogleBtn = (SignInButton) findViewById(R.id.googleBtn);
+
         emailAddressInput = (EditText)findViewById(R.id.emailAddressInput);
+
         emailAddressText = (TextView)findViewById(R.id.emailAddressText);
+
         passwordText = (TextView)findViewById(R.id.passwordText);
+
         passwordInput = (EditText)findViewById(R.id.passwordInput);
+
         logSuccess = false;
+
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        final SharedPreferences.Editor editor = preferences.edit();
+
 
         //new code
         // Configure Google Sign In
@@ -78,6 +102,11 @@ public class LoginActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 signIn();
+
+                editor.putBoolean("Logged",logSuccess = true);
+                editor.commit();
+
+
             }
         });
 
@@ -87,10 +116,18 @@ public class LoginActivity extends AppCompatActivity{
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
 
-                if (user != null) {
+                boolean log = preferences.getBoolean("Logged", false);
+
+                if (user != null && log) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                    startActivity(new Intent(LoginActivity.this, HomeF.class));
+                    Intent logIntent = new Intent(LoginActivity.this,WelcomeActivity.class);
+
+                    logIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                    startActivity(logIntent);
+
+                    finish();
 
 
                 } else {
@@ -108,8 +145,13 @@ public class LoginActivity extends AppCompatActivity{
 
                 signInWithEmailAndPassword(emailAddressInput.getText().toString(), passwordInput.getText().toString());
                 if(logSuccess){
-                    Intent i = new Intent(LoginActivity.this, HomeF.class);
-                    startActivity(i);
+                    Intent logIntent = new Intent(LoginActivity.this,WelcomeActivity.class);
+
+                    logIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                    startActivity(logIntent);
+
+                    finish();
                 }
 
             }

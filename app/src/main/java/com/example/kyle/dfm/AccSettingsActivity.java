@@ -1,6 +1,8 @@
 package com.example.kyle.dfm;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,21 +23,35 @@ import com.google.firebase.auth.GoogleAuthProvider;
 public class AccSettingsActivity extends AppCompatActivity {
 
     private Button logOut;
+
     private Button deleteAcc;
+
     private Button deleteData;
+
     private Button finishedAcc;
+
     private CardView accSettText;
+
+    private SharedPreferences prefAcc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_acc_settings);
 
         logOut = (Button)findViewById(R.id.logOut);
+
         deleteAcc = (Button)findViewById(R.id.deleteAcc);
+
         deleteData = (Button)findViewById(R.id.deleteData);
+
         finishedAcc = (Button)findViewById(R.id.finishedAcc);
+
         accSettText =  (CardView)findViewById(R.id.accSettText);
+
+        prefAcc = PreferenceManager.getDefaultSharedPreferences(this);
 
         logOut.setOnClickListener(new View.OnClickListener() {
 
@@ -44,9 +60,19 @@ public class AccSettingsActivity extends AppCompatActivity {
 
                 FirebaseAuth.getInstance().signOut();
 
+                SharedPreferences.Editor editor = prefAcc.edit();
+
+                editor.remove("Logged");
+
+                editor.commit();
+
                 Intent welcome = new Intent(AccSettingsActivity.this,WelcomeActivity.class);
 
+                welcome.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
                 startActivity(welcome);
+
+                finish();
 
 
             }

@@ -13,6 +13,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -91,7 +93,6 @@ public class ViewLocal extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-
                 if (mData.size() == 1) {
 
                     AlertDialog.Builder adb = new AlertDialog.Builder(ViewLocal.this);
@@ -108,14 +109,14 @@ public class ViewLocal extends AppCompatActivity {
                     adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
 
                         public void onClick(DialogInterface dialog, int which) {
+
                         Intent intent2 = new Intent(ViewLocal.this, AddressActivity.class);
+
                         startActivity(intent2);
 
                         }
                     });
                     adb.show();
-
-
 
                 } else {
 
@@ -133,9 +134,13 @@ public class ViewLocal extends AppCompatActivity {
 
                         public void onClick(DialogInterface dialog, int which) {
 
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                            String iD = user.getUid();
+
                             DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
 
-                            Query itemQuery = ref.child("addressData").orderByChild("mAddressName").equalTo(mData.get(positionToRemove).getAddressName());
+                            Query itemQuery = ref.child(iD).child("addressData").orderByChild("mAddressName").equalTo(mData.get(positionToRemove).getAddressName());
 
                             itemQuery.addListenerForSingleValueEvent(new ValueEventListener() {
 

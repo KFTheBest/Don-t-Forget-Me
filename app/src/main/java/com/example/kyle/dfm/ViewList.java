@@ -13,6 +13,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -54,19 +56,18 @@ public class ViewList extends AppCompatActivity {
 
        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, arrayList);
 
-
         //listView.setAdapter(arrayAdapter);
         DataSource.get(ViewList.this).getData(new DataSource.DataListener(){
             @Override
             public void onDataReceived(List<Data>data){
+
                 mData = data;
+
                 listView.setAdapter(new DataAdapter(ViewList.this, R.layout.list_view_data,data));
             }
         });
 
-
         dataName = (TextView)findViewById(R.id.dataName);
-
 
         final Intent intent = new Intent(this,ViewList.class);
 
@@ -90,21 +91,37 @@ public class ViewList extends AppCompatActivity {
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+
                 AlertDialog.Builder adb = new AlertDialog.Builder(ViewList.this);
+
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                final String iD = user.getUid();
+
                 adb.setTitle("Delete?");
+
                 adb.setMessage("Are you sure you want to delete " + mData.get(i).dataName+ " ?");
+
                 final int positionToRemove = i;
+
                 adb.setNegativeButton("Cancel", null);
+
                 adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
+
                     public void onClick(DialogInterface dialog, int which) {
+
                         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-                        Query itemQuery = ref.child("data").orderByChild("mDataName").equalTo(mData.get(positionToRemove).dataName);
+
+                        Query itemQuery = ref.child(iD).child("data").orderByChild("mDataName").equalTo(mData.get(positionToRemove).dataName);
 
                         itemQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
+
                                 for (DataSnapshot itemSnapshot: dataSnapshot.getChildren()) {
+
                                     itemSnapshot.getRef().removeValue();
+
                                     arrayAdapter.notifyDataSetChanged();
                                 }
                             }
@@ -116,14 +133,14 @@ public class ViewList extends AppCompatActivity {
                         });
 
                     }});
+
                 adb.show();
+
                 return false;
             }
         });
 
-
     }
-
 
     public void onClick(View v) {
 
