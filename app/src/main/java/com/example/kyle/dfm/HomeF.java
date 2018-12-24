@@ -52,6 +52,14 @@ import com.google.android.gms.dynamic.SupportFragmentWrapper;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,6 +128,8 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
     private String location;
 
     Integer radius;
+
+
 
 
     @Override
@@ -194,7 +204,7 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
         addList = new ArrayList<>();
 
-        //
+        final Button startBtn = (Button) findViewById(R.id.startBtn);
 
         handler = new Handler();
 
@@ -206,10 +216,6 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
             }
         });
-
-
-
-        final Button startBtn = (Button) findViewById(R.id.startBtn);
 
         startBtn.setText("Start!");
 
@@ -264,6 +270,10 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
                         startBtn.setText("Start!");
                     }
 
+                    if(toogle==false){
+                        startBtn.setText("Start");
+                    }
+
                 }
 
                 else{
@@ -301,13 +311,42 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
         shared = PreferenceManager.getDefaultSharedPreferences(this);
 
-        final String address = shared.getString("Address", "Error,Error");
+        final String address = shared.getString("Address", "");
 
         final int rad = shared.getInt("Radius", 50);
 
         location = address;
 
         radius = rad;
+
+        if (location == "" || location == null ) {
+
+            Log.d("Deletion", "We out dis bih");
+
+            toogle = false;
+
+            Toast.makeText(getApplicationContext(), "Service has been stopped", Toast.LENGTH_LONG).show();
+
+
+            AlertDialog.Builder adb = new AlertDialog.Builder(HomeF.this);
+
+            adb.setTitle("Error!");
+
+            adb.setMessage("There is no default location set! Please set one before continuing!");
+
+            adb.setNegativeButton("Cancel", null);
+
+            adb.setPositiveButton("Set a Location", new AlertDialog.OnClickListener() {
+
+                public void onClick(DialogInterface dialog, int which) {
+
+                    Intent getLocal = new Intent(HomeF.this, LocationSettings.class);
+                    startActivity(getLocal);
+
+                }
+            });
+            adb.show();
+        }
 
 
 
@@ -401,16 +440,12 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
         super.onResume();
 
         checkPlayServices();
-    }
 
-    @Override
-    protected void onStart() {
 
-        super.onStart();
-
-        if (mGoogleApiClient != null) {
+        if (!mGoogleApiClient.isConnected()) {
 
             mGoogleApiClient.connect();
+
         }
 
         stopped = false;
@@ -418,35 +453,73 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
         stopNotif();
 
 
+    }
+
+    @Override
+    protected void onStart() {
+
+        super.onStart();
+
+        if (!mGoogleApiClient.isConnected()) {
+
+            mGoogleApiClient.connect();
+
+        }
+
+        stopped = false;
+
+        stopNotif();
 
     }
 
     @Override
     protected void onStop() {
 
-        //if(!mGoogleApiClient.isConnected())
+        super.onStop();
 
-        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        mGoogleApiClient.disconnect();
 
-        stopLocationUpdates();
-
-        if (mGoogleApiClient != null) {
-            mGoogleApiClient.disconnect();
-        }
         stopped = true;
 
-        super.onStop();
+
     }
 
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+
+        if(mGoogleApiClient.isConnected()) {
+            startLocationUpdates();
+        }
+
+
+    }
+
+    @Override
+    protected void onPause() {
+
+        super.onPause();
+
+        if (mGoogleApiClient.isConnected()) {
+
+            stopLocationUpdates();
+        }
+
+        stopped = true;
+
+    }
 
     private void startNotif(){
+
         Intent i = new Intent(this, NotificationService.class);
+
         startService(i);
     }
 
     private void stopNotif(){
 
         Intent i = new Intent(this, NotificationService.class);
+
         stopService(i);
 
     }
@@ -475,6 +548,7 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
                 .addApi(LocationServices.API).build();
 
         mGoogleApiClient.connect();
+
         Log.d("Carma", "Client made");
 
     }
@@ -514,13 +588,6 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
     }
 
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-        if (mRequestingLocationUpdates)
-
-            startLocationUpdates();
-    }
 
     @Override
     public void onConnectionSuspended(int i) {
@@ -596,12 +663,6 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
             lon = "";
 
-            if (location == "" || location == null ) {
-
-                Log.d("Deletion", "We out dis bih");
-
-                return true;
-            }
 
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
 
@@ -617,6 +678,8 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
                 currLatitude = mLastLocation.getLatitude();
 
                 currLongitude = mLastLocation.getLongitude();
+
+                location = shared.getString("Address","");
 
                 String[] parts = location.split(",", 2);
 

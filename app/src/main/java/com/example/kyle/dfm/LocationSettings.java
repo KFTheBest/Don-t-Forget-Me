@@ -116,13 +116,12 @@ public class LocationSettings extends AppCompatActivity {
 
                         defaultAddress = items.get(0).getAddressName();
 
-
                         editor.putString("Address", defaultAddress);
 
                         editor.commit();
                     }
                     else{
-                        defaultAddress = prefAdd.getString("Address", "Error,Error");
+                        defaultAddress = prefAdd.getString("Address", "");
                     }
                 }
                 else{
