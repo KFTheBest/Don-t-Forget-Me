@@ -1,6 +1,8 @@
 package com.example.kyle.dfm;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,6 +29,8 @@ public class RegisterActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private boolean regSuccess;
 
+    public SharedPreferences preferences;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,27 +45,60 @@ public class RegisterActivity extends AppCompatActivity {
        passwordRegInput = (EditText) findViewById(R.id.passwordRegInput);
        mAuth = FirebaseAuth.getInstance();
        regSuccess = false;
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        emailRegInput.setHint("Ex. abc@xys.com");
+        passwordRegInput.setHint("Must be more than 6 characters!");
+
+
+
+
 
        mRegister.setOnClickListener(new View.OnClickListener() {
 
            @Override
            public void onClick(View view) {
 
-               createUserWithEmailAndPassword(emailRegInput.getText().toString(),passwordRegInput.getText().toString());
 
-               if(regSuccess){
-                   Intent home = new Intent(RegisterActivity.this,HomeF.class);
-
-                   startActivity(home);
+               if(!(emailValid(emailRegInput.getText().toString())) || !(passValid(passwordRegInput.getText().toString()))){
+                   Toast.makeText(RegisterActivity.this, "Please enter a valid email address and password!.",
+                           Toast.LENGTH_SHORT).show();
                }
+               else {
+                   createUserWithEmailAndPassword(emailRegInput.getText().toString(), passwordRegInput.getText().toString());
+               }
+
            }
        });
 
     }
 
+    private boolean emailValid(String emailAddress){
+        return (emailAddress.contains("@") || emailAddress.contains(" ") || emailAddress.contains(","));
+    }
+
+    private boolean passValid(String password){
+        return password.length()>6;
+    }
+
+
+    @Override
+    protected void onStart() {
+
+        super.onStart();
+
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        updateUI(currentUser);
+
+    }
+
+    public void updateUI(FirebaseUser user) {
+
+    }
+
     //this is for username and passwork textfields
-    public void createUserWithEmailAndPassword(String email, String password) {
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+    public boolean createUserWithEmailAndPassword(String email, String password) {
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this,  new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
 
@@ -72,19 +109,36 @@ public class RegisterActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT).show();
 
                     FirebaseUser user = mAuth.getCurrentUser();
-                    //updateUI(user);
+                    updateUI(user);
                     regSuccess = true;
+
+                    final SharedPreferences.Editor editor = preferences.edit();
+
+
+                    editor.putBoolean("Logged",regSuccess);
+                    editor.commit();
+                    Intent intent = new Intent(RegisterActivity.this,HomeF.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                    startActivity(intent);
+
+                    finish();
+
+
+
                 }
                 else {
 
                     Toast.makeText(RegisterActivity.this, "Authentication failed.",
                             Toast.LENGTH_SHORT).show();
-                    //updateUI(null);
+                    updateUI(null);
                     regSuccess = false;
                 }
                 // ...
             }
         });
+
+        return regSuccess;
     }
 
 }

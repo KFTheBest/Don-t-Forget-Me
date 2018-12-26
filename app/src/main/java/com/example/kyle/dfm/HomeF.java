@@ -687,8 +687,8 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
                 lon = parts[1];
 
-
                 if(setLatitude == null || setLatitude.toString() == "" || setLongitude == null || setLongitude.toString() =="") {
+
                     setLatitude = Double.parseDouble(lat);
 
                     setLongitude = Double.parseDouble(lon);

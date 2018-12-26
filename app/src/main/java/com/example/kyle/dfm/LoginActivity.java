@@ -224,33 +224,6 @@ public class LoginActivity extends AppCompatActivity{
         }
     }
 
-
-    //this is for username and passwork textfields
-    public void createUserWithEmailAndPassword(String email, String password) {
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
-
-                // Sign in success, update UI with the signed-in user's information
-                if (task.isSuccessful()) {
-                    Toast.makeText(LoginActivity.this, "Login is successful",
-                            Toast.LENGTH_SHORT).show();
-
-                    FirebaseUser user = mAuth.getCurrentUser();
-                    //updateUI(user);
-                }
-                else {
-                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                    Toast.makeText(LoginActivity.this, "Authentication failed.",
-                            Toast.LENGTH_SHORT).show();
-                    //updateUI(null);
-                }
-                // ...
-            }
-        });
-    }
-
     //this is for username and passwork textfields
     public void signInWithEmailAndPassword(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
@@ -271,6 +244,11 @@ public class LoginActivity extends AppCompatActivity{
                                     logSuccess = true;
                                     Toast.makeText(LoginActivity.this, "Sign in Success",
                                             Toast.LENGTH_SHORT).show();
+
+                                    SharedPreferences.Editor editor = preferences.edit();
+
+                                    editor.putBoolean("Logged",logSuccess = true);
+                                    editor.commit();
                                 }
 
                                 // ...
