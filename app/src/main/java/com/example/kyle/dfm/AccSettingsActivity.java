@@ -86,6 +86,7 @@ public class AccSettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>()
                 {
                      @Override

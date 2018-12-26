@@ -121,7 +121,7 @@ public class LoginActivity extends AppCompatActivity{
                 if (user != null && log) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                    Intent logIntent = new Intent(LoginActivity.this,WelcomeActivity.class);
+                    Intent logIntent = new Intent(LoginActivity.this,HomeF.class);
 
                     logIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
@@ -144,15 +144,6 @@ public class LoginActivity extends AppCompatActivity{
             public void onClick(View view) {
 
                 signInWithEmailAndPassword(emailAddressInput.getText().toString(), passwordInput.getText().toString());
-                if(logSuccess){
-                    Intent logIntent = new Intent(LoginActivity.this,WelcomeActivity.class);
-
-                    logIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-                    startActivity(logIntent);
-
-                    finish();
-                }
 
             }
         });
@@ -213,6 +204,8 @@ public class LoginActivity extends AppCompatActivity{
     public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        updateUI(currentUser);
     }
 
     //this is for username and passwork textfields
@@ -225,7 +218,7 @@ public class LoginActivity extends AppCompatActivity{
     }
 
     //this is for username and passwork textfields
-    public void signInWithEmailAndPassword(String email, String password) {
+    public boolean signInWithEmailAndPassword(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                             @Override
@@ -235,25 +228,39 @@ public class LoginActivity extends AppCompatActivity{
                                 // If sign in fails, display a message to the user. If sign in succeeds
                                 // the auth state listener will be notified and logic to handle the
                                 // signed in user can be handled in the listener.
-                                if (!task.isSuccessful()) {
-                                    logSuccess = false;
-                                    Log.w(TAG, "signInWithEmail:failed", task.getException());
-                                    Toast.makeText(LoginActivity.this, "Sign in Failed!!!!",
-                                            Toast.LENGTH_SHORT).show();
-                                } else {
+                                if (task.isSuccessful()) {
+
                                     logSuccess = true;
-                                    Toast.makeText(LoginActivity.this, "Sign in Success",
+                                    Toast.makeText(LoginActivity.this, "Sign in Successful!",
                                             Toast.LENGTH_SHORT).show();
 
                                     SharedPreferences.Editor editor = preferences.edit();
 
                                     editor.putBoolean("Logged",logSuccess = true);
                                     editor.commit();
+
+
+                                    Intent logIntent = new Intent(LoginActivity.this,HomeF.class);
+
+                                    logIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                                    startActivity(logIntent);
+
+                                    finish();
+
+                                } else {
+
+
+                                    logSuccess = false;
+                                    Log.w(TAG, "signInWithEmail:failed", task.getException());
+                                    Toast.makeText(LoginActivity.this, "Sign in Failed!",
+                                            Toast.LENGTH_SHORT).show();
                                 }
 
                                 // ...
                             }
                         });
+        return logSuccess;
     }
 
 
