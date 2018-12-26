@@ -1,5 +1,6 @@
 package com.example.kyle.dfm;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -30,6 +31,7 @@ public class RegisterActivity extends AppCompatActivity {
     private boolean regSuccess;
 
     public SharedPreferences preferences;
+
 
 
     @Override
@@ -105,36 +107,55 @@ public class RegisterActivity extends AppCompatActivity {
 
                 // Sign in success, update UI with the signed-in user's information
                 if (task.isSuccessful()) {
-                    Toast.makeText(RegisterActivity.this, "Login is successful",
-                            Toast.LENGTH_SHORT).show();
 
-                    FirebaseUser user = mAuth.getCurrentUser();
-                    updateUI(user);
                     regSuccess = true;
 
                     final SharedPreferences.Editor editor = preferences.edit();
 
-
                     editor.putBoolean("Logged",regSuccess);
+
                     editor.commit();
+
+                    final FirebaseUser user = mAuth.getCurrentUser();
+
+                    updateUI(user);
+
+                    user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+
+                                Toast.makeText(RegisterActivity.this, "A verification email was sent to your email!",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                            else {
+                                Toast.makeText(RegisterActivity.this, "Email verification email unable to be sent. Try again.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+
+
+
                     Intent intent = new Intent(RegisterActivity.this,HomeF.class);
+
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
                     startActivity(intent);
 
                     finish();
 
-
-
                 }
                 else {
 
                     Toast.makeText(RegisterActivity.this, "Authentication failed.",
                             Toast.LENGTH_SHORT).show();
+
                     updateUI(null);
+
                     regSuccess = false;
                 }
-                // ...
+
             }
         });
 

@@ -79,6 +79,8 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
     List<Data> mData;
 
+    private FirebaseAuth mAuth;
+
     TextView dataName;
 
     String lat = "";
@@ -305,7 +307,27 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
             }
         });
 
+        mAuth = FirebaseAuth.getInstance();
 
+        FirebaseUser user = mAuth.getCurrentUser();
+
+
+        if(!user.isEmailVerified()) {
+
+            AlertDialog.Builder adb = new AlertDialog.Builder(HomeF.this);
+
+            adb.setTitle("Alert!");
+
+            adb.setMessage("Please verify your email to ensure account integrity!");
+
+            adb.setNegativeButton("Cancel", null);
+
+            adb.setPositiveButton("Ok", null);
+
+            adb.show();
+
+        }
+        
 
         notificationManagerCompat = NotificationManagerCompat.from(this);
 

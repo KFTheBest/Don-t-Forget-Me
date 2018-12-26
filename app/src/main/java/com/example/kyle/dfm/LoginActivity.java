@@ -1,11 +1,14 @@
 package com.example.kyle.dfm;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -44,6 +47,10 @@ public class LoginActivity extends AppCompatActivity{
 
     private Button msignIn;
 
+    private Button forgotButton;
+
+    private Button fbSignIn;
+
     private TextView emailAddressText;
 
     private TextView passwordText;
@@ -81,6 +88,10 @@ public class LoginActivity extends AppCompatActivity{
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         final SharedPreferences.Editor editor = preferences.edit();
+
+        forgotButton = (Button)findViewById(R.id.forgotPass);
+
+        fbSignIn = (Button)findViewById(R.id.fbLogin);
 
 
         //new code
@@ -148,6 +159,75 @@ public class LoginActivity extends AppCompatActivity{
             }
         });
         //this is for username and passwork textfields
+
+
+        forgotButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                builder.setTitle("Send Instructions to Email");
+                builder.setMessage("Please enter the email you used to register to send the rest instructions to!");
+
+// Set up the input
+                final EditText input = new EditText(LoginActivity.this);
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                //input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                builder.setView(input);
+
+// Set up the buttons
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+
+                        final String emailAddress = input.getText().toString();
+
+
+
+                        mAuth.sendPasswordResetEmail(emailAddress).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+
+                                    Log.d("Sent", "We out dis bih");
+
+                                    Toast.makeText(LoginActivity.this, "Email sent!", Toast.LENGTH_SHORT).show();
+
+
+                                }
+                                else {
+                                    Toast.makeText(LoginActivity.this, "Email not sent. Try again.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+
+
+
+            }
+        });
+
+        fbSignIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+
+            }
+        });
 
     }
 
@@ -240,11 +320,16 @@ public class LoginActivity extends AppCompatActivity{
                                     editor.commit();
 
 
+
+
+
                                     Intent logIntent = new Intent(LoginActivity.this,HomeF.class);
 
                                     logIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
                                     startActivity(logIntent);
+
+
 
                                     finish();
 
