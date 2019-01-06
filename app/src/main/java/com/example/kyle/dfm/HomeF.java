@@ -327,7 +327,7 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
             adb.show();
 
         }
-        
+
 
         notificationManagerCompat = NotificationManagerCompat.from(this);
 

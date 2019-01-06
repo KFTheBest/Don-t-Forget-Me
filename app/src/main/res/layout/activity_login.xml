@@ -102,7 +102,7 @@
         android:background="@color/colorAccent"
         android:textColor="@android:color/white" />
 
-    <Button
+    <com.facebook.login.widget.LoginButton
         android:id="@+id/fbLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -1,12 +1,14 @@
 package com.example.kyle.dfm;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -30,10 +32,12 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -155,13 +159,28 @@ public class AddressActivity extends AppCompatActivity implements GoogleApiClien
         }
     }
 
-    public String convertAddress(String addresstxt){
+    public LatLng convertAddress(Context context,String addresstxt){
 
-        String coordinates = "";
+        Geocoder coder = new Geocoder(context);
+        List<Address> address;
+        LatLng p1 = null;
 
-        //NEEDS TO BE DONE
+        try {
+            // May throw an IOException
+            address = coder.getFromLocationName(addresstxt, 5);
+            if (address == null) {
+                return null;
+            }
 
-        return coordinates;
+            Address location = address.get(0);
+            p1 = new LatLng(location.getLatitude(), location.getLongitude() );
+
+        } catch (IOException ex) {
+
+            ex.printStackTrace();
+        }
+
+        return p1;
 
     }
 
@@ -359,6 +378,10 @@ public class AddressActivity extends AppCompatActivity implements GoogleApiClien
 
         else{
             String addressText = address1Text + "," + address2Text + "," + cityText + "," + stateText + "," + zipcodeText;
+
+            LatLng coordinates = convertAddress(getApplicationContext(),addressText);
+
+            addressText = Double.toString(coordinates.latitude) + "," + Double.toString(coordinates.longitude);
 
             AddressData addressData = new AddressData(addressText);
 

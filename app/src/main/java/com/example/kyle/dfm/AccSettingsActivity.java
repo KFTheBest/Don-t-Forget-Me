@@ -10,6 +10,7 @@ import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,7 +34,7 @@ public class AccSettingsActivity extends AppCompatActivity {
 
     private Button deleteAcc;
 
-    private Button deleteData;
+    private Button linkAcc;
 
     private Button finishedAcc;
 
@@ -56,7 +57,7 @@ public class AccSettingsActivity extends AppCompatActivity {
 
         deleteAcc = (Button)findViewById(R.id.deleteAcc);
 
-        deleteData = (Button)findViewById(R.id.deleteData);
+        linkAcc = (Button)findViewById(R.id.linkAcc);
 
         finishedAcc = (Button)findViewById(R.id.finishedAcc);
 
@@ -116,11 +117,14 @@ public class AccSettingsActivity extends AppCompatActivity {
             }
         });
 
-        deleteData.setOnClickListener(new View.OnClickListener() {
+        linkAcc.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
 
+                Intent link = new Intent(AccSettingsActivity.this,LinkActivity.class);
+
+                startActivity(link);
 
             }
         });
