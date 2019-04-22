@@ -130,10 +130,6 @@ public class LoginActivity extends AppCompatActivity{
         fbSignIn = (Button)findViewById(R.id.fbLogin);
 
 
-
-
-
-
         //new code
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

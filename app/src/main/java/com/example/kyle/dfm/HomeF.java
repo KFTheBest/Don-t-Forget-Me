@@ -267,7 +267,7 @@ public class HomeF extends AppCompatActivity implements NavigationView.OnNavigat
 
                         toogle = false;
 
-                        Toast.makeText(getApplicationContext(), "Service has been stopped", Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getApplicationContext(), "Service has been stopped", Toast.LENGTH_LONG).show();
 
                         startBtn.setText("Start!");
                     }

@@ -43,6 +43,7 @@ import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.UserInfo;
 
+import java.util.Arrays;
 import java.util.List;
 
 import bolts.Capture;
@@ -86,7 +87,28 @@ public class LinkActivity extends AppCompatActivity {
 
         FacebookSdk.sdkInitialize(getApplicationContext());
 
-        AppEventsLogger.activateApp(this);
+        callbackManager = CallbackManager.Factory.create();
+
+        LoginManager.getInstance().registerCallback(callbackManager,
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        Log.d("Success", "Login");
+
+                        facebookCred = FacebookAuthProvider.getCredential(loginResult.getAccessToken().getToken());
+
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        Toast.makeText(LinkActivity.this, "Login Cancel", Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onError(FacebookException exception) {
+                        Toast.makeText(LinkActivity.this, exception.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
 
         setContentView(R.layout.activity_link);
 
@@ -106,7 +128,6 @@ public class LinkActivity extends AppCompatActivity {
 
         liEmail.setText("Link account with Email");
 
-        callbackManager = CallbackManager.Factory.create();
 
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -291,9 +312,8 @@ public class LinkActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                /*if (!facebookBool) {
-                    liFacebook.setText("Unlink account with Facebook");
-                    facebookBool = true;
+                if (!facebookBool) {
+
 
                     final String[] providers = {"Email", "Google"};
 
@@ -315,25 +335,15 @@ public class LinkActivity extends AppCompatActivity {
                                 alert.setTitle("Alert").setMessage("Please enter" + " your credentials!")
                                         .setView(textEntryView).setPositiveButton("Save", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
-                                        mAuth.signInWithEmailAndPassword(input1.getText().toString(), input2.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                                if (task.isSuccessful()) {
-                                                    emailCred = EmailAuthProvider.getCredential(input1.getText().toString(), input2.getText().toString());
-
-                                                } else {
-                                                    Toast.makeText(LinkActivity.this, "Unable to log In. Please try again.", Toast.LENGTH_SHORT).show();
-                                                }
-                                            }
-                                        });
+                                        emailCred = EmailAuthProvider.getCredential(input1.getText().toString(), input2.getText().toString());
                                     }
                                 }).setNegativeButton("Cancel", null);
                                 alert.show();
 
                                 if(emailCred !=null) {
+                                    LoginManager.getInstance().logInWithReadPermissions(LinkActivity.this, Arrays.asList("public_profile", "email"));
 
-
-                                    mAuth.getCurrentUser().linkWithCredential(emailCred)
+                                    mAuth.getCurrentUser().linkWithCredential(facebookCred)
                                             .addOnCompleteListener(LinkActivity.this, new OnCompleteListener<AuthResult>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<AuthResult> task) {
@@ -357,8 +367,7 @@ public class LinkActivity extends AppCompatActivity {
                                 }
 
                             } else {
-
-
+                                
 
                                 mAuth.getAccessToken(true).addOnCompleteListener(LinkActivity.this, new OnCompleteListener<GetTokenResult>() {
                                     @Override
@@ -372,8 +381,10 @@ public class LinkActivity extends AppCompatActivity {
 
                                 if(googleCred != null) {
 
+                                    LoginManager.getInstance().logInWithReadPermissions(LinkActivity.this, Arrays.asList("public_profile", "email"));
 
-                                    mAuth.getCurrentUser().linkWithCredential(googleCred)
+
+                                    mAuth.getCurrentUser().linkWithCredential(facebookCred)
                                             .addOnCompleteListener(LinkActivity.this, new OnCompleteListener<AuthResult>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<AuthResult> task) {
@@ -401,6 +412,9 @@ public class LinkActivity extends AppCompatActivity {
                         }
                     });
                     builder.show();
+
+                    liFacebook.setText("Unlink account with Facebook");
+                    facebookBool = true;
                 } else {
                     List<? extends UserInfo> infos = mAuth.getCurrentUser().getProviderData();
 
@@ -412,25 +426,34 @@ public class LinkActivity extends AppCompatActivity {
                         }
                     }
 
-
-                    mAuth.getCurrentUser().unlink(providerId)
-                            .addOnCompleteListener(LinkActivity.this, new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(LinkActivity.this, "Your Facebook account is now unlinked!", Toast.LENGTH_SHORT).show();
+                    if(mAuth.getCurrentUser().unlink(providerId)!= null) {
+                        mAuth.getCurrentUser().unlink(providerId)
+                                .addOnCompleteListener(LinkActivity.this, new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(LinkActivity.this, "Your Facebook account is now unlinked!", Toast.LENGTH_SHORT).show();
+                                        }
                                     }
-                                }
-                            });
+                                });
+                        liFacebook.setText("Link account with Facebook");
+                        facebookBool = false;
+                    }
 
-                    liFacebook.setText("Link account with Facebook");
-                    facebookBool = false;
 
-                }*/
+
+                }
 
 
 
                 //Log in with face book then take that credential and link with the current one
+
+
+
+
+
+
+
 
 
             }
@@ -612,6 +635,10 @@ public class LinkActivity extends AppCompatActivity {
                 // Google Sign In failed, update UI appropriately
                 // ...
             }
+        }
+
+        if(callbackManager.onActivityResult(requestCode, resultCode, data)) {
+            return;
         }
     }
 
